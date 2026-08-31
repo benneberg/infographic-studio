@@ -43,3 +43,16 @@ npx serve apps/infographic-studio
 - Groq default model: `llama-3.3-70b-versatile`; OpenRouter default: `openai/gpt-4o-mini`.
 - Source material is truncated to roughly 38k characters, split across sources.
 - The prompt forbids invented metrics — highlights must be grounded in the supplied material.
+
+---
+
+## 🧠 Deep Dive & Future Vision
+
+Infographic Studio is designed to evolve from a single-file browser app into a **deterministic visual generation system**. 
+
+## Long term Architecture
+If you are interested in the long-term architecture, data models, or contributing to the core specification, please review the design documents:
+
+- 📄 **[Product Requirements (PRD)](./docs/PRD.md)**: The core philosophy and intended workflows.
+- 🏗️ **[Architecture](./docs/ARCHITECTURE.md)**: How the Studio, CLI, and GitHub Action will share a single rendering core.
+- 📜 **[Open Specification (Draft)](./docs/open-spec.md)**: The portable, deterministic YAML/JSON schema for infographic projects.
