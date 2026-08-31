@@ -1,9 +1,13 @@
 # Infographic Studio
 
-A single-file, mobile-first web app that turns a repository URL, docs URL or pasted document
-into a professional one-shot product infographic.
+> A single-file, zero-dependency, mobile-first web app that turns repository URLs, documentation, or pasted text into professional, one-shot product infographics.
 
-No build step, no server, no dependencies: open `index.html` (or serve the folder) and it runs.
+[![CI](https://github.com/benneberg/infographic-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/benneberg/infographic-studio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-2ea44f.svg)](https://github.com/benneberg/infographic-studio)
+[![Single File](https://img.shields.io/badge/Architecture-Single%20File%20HTML-blue.svg)](https://github.com/benneberg/infographic-studio)
+
+---
 
 ## Features
 
