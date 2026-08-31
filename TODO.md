@@ -133,3 +133,89 @@
 | `a11y` | #3 Accessibility |
 | `ux` | #1 Section Regen, #10 Undo/Redo |
 | `distribution` | #11 PWA, #12 Deploy Templates |
+
+
+
+
+Infographic Studio — TODO
+
+Priority: High
+
+Section-Level Regeneration
+
+ Implement per-section variant cycling with more distinct strategies (not just truncation length)
+ Add "regenerate with different emphasis" — e.g., emphasize metrics vs. narrative vs. technical depth
+ Allow manual editing of individual section source text before re-rendering
+ Add undo/redo stack for regeneration history
+ Show a diff or transition animation when a section changes
+Offline Resilience via Service Worker
+
+ Register a Service Worker that caches the app shell (HTML, CSS, JS, fonts)
+ Implement cache-first strategy for static assets, network-first for dynamic content
+ Cache previously generated infographics in IndexedDB for offline viewing
+ Add an offline indicator in the header
+ Store the current input text in IndexedDB so it survives browser restarts
+Smarter Chunking for Large Inputs
+
+ Replace flat 38k truncation with section-priority-aware truncation (partially done — improve)
+ Implement two-pass analysis: first pass summarizes low-priority sections, second pass generates from summaries + full high-priority sections
+ Add a "section priority" UI where users can drag-reorder which sections matter most
+ Show a visual indicator of which sections were truncated and which were kept in full
+ For monorepo READMEs, detect and handle nested README references
+Priority: Medium
+
+Accessibility (ARIA & Semantic Structure)
+
+ Add role="heading" with proper aria-level to all SVG title elements
+ Generate a hidden text-only summary as a <desc> element for screen readers
+ Ensure all decorative SVG elements have aria-hidden="true"
+ Add keyboard navigation between sections in the infographic (Tab/Arrow keys)
+ Provide a "text-only view" toggle that shows the extracted structured data as accessible HTML
+ Test with VoiceOver, NVDA, and JAWS
+ Ensure color contrast meets WCAG AA in all four themes (especially Emerald and Crimson accent on dark)
+Infographic Layout Improvements
+
+ Add a "timeline" layout option for roadmap/changelog sections
+ Add a "comparison table" renderer for sections with aligned bullet points
+ Support > blockquote rendering as a callout/highlight card
+ Add QR code generation linking to the original repo URL (if detected)
+ Implement a "compact" mode that reduces spacing for print-friendly output
+ Add optional logo/image insertion (paste or upload, embed as base64 in SVG)
+Input Experience
+
+ Add a real-time "section detection" sidebar that shows what the parser finds as you type
+ Support paste-from-URL — fetch a raw GitHub README via the CORS proxy
+ Add syntax highlighting for the Markdown input (use a lightweight highlighter like Prism)
+ Support multiple documents — paste a README + an API spec, merge into one infographic
+ Add word/reading time estimate alongside character count
+Priority: Low
+
+Export & Sharing
+
+ Add PDF export (via SVG → Canvas → jsPDF)
+ Generate a shareable URL by base64-encoding the spec (not the full text) in the hash
+ Add "Copy as HTML" that converts the SVG to an inline SVG code block for pasting into Notion/Confluence
+ Add print stylesheet that scales the infographic to fill a letter/A4 page
+ Batch export — generate infographics for multiple READMEs in a monorepo
+Visual Polish
+
+ Add subtle entrance animations to SVG sections (staggered fade-in via CSS or SMIL)
+ Implement a "dark mode / light mode" toggle for the app UI (separate from infographic theme)
+ Add a mini-map / section navigator for long infographics
+ Gradient text option for the hero title
+ Custom accent color picker for infographic themes
+Architecture & DX
+
+ Migrate to a proper build system (Vite) for development ergonomics
+ Extract the parser, analyzer, and renderer into separate ES modules
+ Add unit tests for the parser (various Markdown formats) and classifier
+ Add visual regression tests for SVG output (pixel-diff snapshots)
+ Set up a simple Storybook or demo page showing all section types
+ Add TypeScript types for the infographic spec JSON schema
+Advanced Features
+
+ Local LLM integration — use WebLLM or ONNX Runtime to run a small summarization model client-side for genuinely smarter analysis
+ Template system — let users save/load custom layout templates as JSON
+ Collaborative editing — use CRDTs (Yjs) for real-time multi-user input
+ Plugin system — allow custom section renderers to be registered at runtime
+
