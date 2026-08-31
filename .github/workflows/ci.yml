@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-static-assets:
+    name: Validate Single-File Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify index.html exists and is not empty
+        run: |
+          if [ ! -s index.html ]; then
+            echo "❌ Error: index.html is missing or empty!"
+            exit 1
+          fi
+          echo "✅ index.html exists and has content."
+
+      - name: Basic HTML Structure Check
+        run: |
+          if ! grep -q "<!DOCTYPE html>" index.html; then
+            echo "❌ Error: index.html is missing <!DOCTYPE html> declaration!"
+            exit 1
+          fi
+          if ! grep -q "</html>" index.html; then
+            echo "❌ Error: index.html is missing closing </html> tag!"
+            exit 1
+          fi
+          echo "✅ Basic HTML structure is valid."
+
+      - name: Success
+        run: echo "🎉 Static asset validation passed! The single-file app is intact."
