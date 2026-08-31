@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infographic Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--bg:#0C0D10;--surface:#13151A;--card:#1A1D24;--border:#272B34;--fg:#E8EAED;--muted:#7A8090;--accent:#F59E0B;--accent-hover:#FBBF24;--accent-dim:rgba(245,158,11,0.12);--success:#10B981;--danger:#EF4444}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(245,158,11,0.035) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+header{position:sticky;top:0;z-index:50;background:rgba(12,13,16,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#D97706);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#0C0D10}
+.logo-text{font-weight:700;font-size:16px;letter-spacing:-0.3px}.logo-text span{color:var(--accent)}
+.hdr-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;text-decoration:none}
+.hdr-btn:hover{color:var(--fg);border-color:var(--muted)}.hdr-btn.connected{border-color:var(--success);color:var(--success)}
+main{display:flex;height:calc(100vh - 54px);position:relative;z-index:1}
+#input-panel{width:400px;min-width:340px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface)}
+.pnl-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+.pnl-row{display:flex;align-items:center;justify-content:space-between}
+.pnl-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}.pnl-title i{color:var(--accent);font-size:12px}
+.sm-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 9px;border-radius:5px;font-size:11px;font-family:inherit;cursor:pointer;transition:all .2s}
+.sm-btn:hover{color:var(--accent);border-color:var(--accent)}
+.gh-row{display:flex;gap:6px;align-items:center}
+.gh-input{flex:1;background:var(--card);border:1px solid var(--border);color:var(--fg);padding:7px 10px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s}
+.gh-input:focus{border-color:var(--accent)}.gh-input::placeholder{color:var(--muted);opacity:.5}
+.gh-fetch{background:var(--accent-dim);border:1px solid rgba(245,158,11,0.25);color:var(--accent);padding:7px 12px;border-radius:6px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.gh-fetch:hover{background:rgba(245,158,11,0.2);border-color:var(--accent)}.gh-fetch:disabled{opacity:.4;cursor:not-allowed}
+.gh-meta{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin:0 18px;font-size:11px;display:none}
+.gh-meta.active{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.gh-meta-item{display:flex;align-items:center;gap:4px;color:var(--muted)}.gh-meta-item strong{color:var(--fg)}
+.or-divider{display:flex;align-items:center;gap:10px;padding:6px 18px;font-size:11px;color:var(--muted)}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.tmpl-sel{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:4px 8px;border-radius:5px;font-size:11px;font-family:inherit;cursor:pointer;outline:none}.tmpl-sel:focus{border-color:var(--accent)}
+#source-input{flex:1;background:transparent;border:none;color:var(--fg);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;padding:12px 18px;resize:none;outline:none;tab-size:2}
+#source-input::placeholder{color:var(--muted);opacity:.5}
+.inp-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.char-ct{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.char-ct.warn{color:var(--accent)}.char-ct.danger{color:var(--danger)}
+#gen-btn{background:linear-gradient(135deg,var(--accent),#D97706);color:#0C0D10;border:none;padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+#gen-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(245,158,11,0.3)}
+#gen-btn:active{transform:translateY(0)}#gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.shortcut{font-size:9px;color:rgba(12,13,16,0.45);font-weight:600;background:rgba(12,13,16,0.12);padding:1px 4px;border-radius:2px;margin-left:3px}
+.mode-badge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:500;white-space:nowrap}
+.mode-badge.ai{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(245,158,11,0.2)}
+.mode-badge.rule{background:rgba(122,128,144,0.1);color:var(--muted);border:1px solid var(--border)}
+#output-panel{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative}
+#empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+.empty-icon{width:72px;height:72px;border-radius:18px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--accent);animation:ep 3s ease-in-out infinite}
+@keyframes ep{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.04);opacity:1}}
+.empty-title{font-size:17px;font-weight:600}.empty-desc{font-size:12.5px;color:var(--muted);max-width:360px;line-height:1.65}
+#infographic-container{flex:1;display:none;flex-direction:column;overflow:hidden}
+#infographic-container.active{display:flex}
+.out-toolbar{padding:8px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);flex-shrink:0;gap:8px;flex-wrap:wrap}
+.tb-left{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.tb-right{display:flex;align-items:center;gap:5px}
+.sec-chip{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px;font-family:inherit;user-select:none}
+.sec-chip:hover{color:var(--fg);border-color:var(--muted)}
+.sec-chip .ri{font-size:8px;opacity:0;transition:opacity .2s;color:var(--accent)}.sec-chip:hover .ri{opacity:1}
+.tb-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.tb-btn:hover{color:var(--fg);border-color:var(--muted)}
+#infographic-wrapper{flex:1;overflow:auto;padding:28px;display:flex;justify-content:center;align-items:flex-start}
+#infographic-wrapper svg{max-width:100%;height:auto;border-radius:12px;box-shadow:0 8px 36px rgba(0,0,0,0.4);transition:box-shadow .3s}
+#infographic-wrapper svg:hover{box-shadow:0 12px 48px rgba(0,0,0,0.5)}
+#loading-overlay{position:absolute;inset:0;background:rgba(12,13,16,0.92);display:none;align-items:center;justify-content:center;z-index:20;flex-direction:column;gap:14px}
+#loading-overlay.active{display:flex}
+.ld-dots{display:flex;gap:7px}.ld-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:ldb 1.2s ease-in-out infinite}
+.ld-dot:nth-child(2){animation-delay:.15s}.ld-dot:nth-child(3){animation-delay:.3s}
+@keyframes ldb{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1);opacity:1}}
+.ld-text{font-size:12px;color:var(--muted);max-width:280px;text-align:center;line-height:1.5}
+.tm-drop{position:relative}
+.tm-menu{position:absolute;top:100%;right:0;margin-top:4px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:5px;display:none;z-index:30;min-width:140px;box-shadow:0 8px 20px rgba(0,0,0,0.4);max-height:280px;overflow-y:auto}
+.tm-menu.open{display:block}
+.tm-opt{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:4px;font-size:11px;cursor:pointer;transition:background .15s;color:var(--fg);border:none;background:none;width:100%;font-family:inherit;text-align:left}
+.tm-opt:hover{background:var(--accent-dim)}.tm-sw{width:13px;height:13px;border-radius:3px;border:1px solid var(--border);flex-shrink:0}
+.tm-opt.active-theme{background:var(--accent-dim)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.active{display:flex}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:600px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-hdr h2{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px 8px;transition:color .2s}.modal-close:hover{color:var(--fg)}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;padding:0 22px;overflow-x:auto}
+.modal-tab{padding:10px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;transition:all .2s;background:none;font-family:inherit;white-space:nowrap}
+.modal-tab:hover{color:var(--fg)}.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.modal-body{flex:1;overflow-y:auto;padding:22px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.fg{margin-bottom:18px}
+.fl{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.fl span{font-size:12px;font-weight:600;color:var(--fg)}
+.fh{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
+.fiw{display:flex;gap:6px;align-items:center}
+.fi{flex:1;background:var(--card);border:1px solid var(--border);color:var(--fg);padding:8px 11px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--accent)}.fi::placeholder{color:var(--muted);opacity:.5}
+.fi-sel{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:8px 11px;border-radius:6px;font-size:12px;font-family:inherit;outline:none;cursor:pointer;flex:1;min-width:0}
+.fi-sel:focus{border-color:var(--accent)}
+.tbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:7px 10px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.tbtn:hover{color:var(--fg);border-color:var(--muted)}.tbtn.ok{color:var(--success);border-color:var(--success)}.tbtn.fail{color:var(--danger);border-color:var(--danger)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0}
+.sdot.ok{background:var(--success)}.sdot.fail{background:var(--danger)}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
+.btn-s{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:7px 16px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .2s}
+.btn-s:hover{border-color:var(--muted)}
+.btn-p{background:var(--accent);border:none;color:#0C0D10;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s}
+.btn-p:hover{background:var(--accent-hover)}
+.color-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.color-row label{font-size:11px;color:var(--muted);width:120px;flex-shrink:0}
+.color-row input[type="color"]{width:36px;height:30px;border:1px solid var(--border);border-radius:5px;cursor:pointer;background:var(--card);padding:2px}
+.color-row input[type="color"]::-webkit-color-swatch-wrapper{padding:1px}
+.color-row input[type="color"]::-webkit-color-swatch{border-radius:3px;border:none}
+.color-row .hex-val{font-size:11px;color:var(--fg);font-family:'JetBrains Mono',monospace;background:var(--card);border:1px solid var(--border);padding:5px 8px;border-radius:4px;width:85px;outline:none}
+.color-row .hex-val:focus{border-color:var(--accent)}
+.theme-preview{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:14px}
+.theme-preview-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+.theme-preview-swatch{width:40px;height:24px;border-radius:4px;border:1px solid var(--border)}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:9px 14px;border-radius:7px;font-size:12px;display:flex;align-items:center;gap:7px;box-shadow:0 8px 20px rgba(0,0,0,0.4);animation:ti .3s ease-out;max-width:320px}
+.toast.out{animation:to .25s ease-in forwards}.toast i{color:var(--success);flex-shrink:0}.toast.error i{color:var(--danger)}
+@keyframes ti{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes to{to{opacity:0;transform:translateY(-6px) scale(.95)}}
+body.fs-mode header{display:none}body.fs-mode #input-panel{display:none}body.fs-mode main{height:100vh}
+body.fs-mode #infographic-wrapper{padding:0;background:var(--bg);align-items:center}
+body.fs-mode .out-toolbar{position:fixed;top:0;left:0;right:0;z-index:40}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+@media(max-width:860px){main{flex-direction:column}#input-panel{width:100%;min-width:unset;max-height:42vh;border-right:none;border-bottom:1px solid var(--border)}#infographic-wrapper{padding:14px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-group"><div class="logo-icon">IS</div><div class="logo-text">Infographic <span>Studio</span></div></div>
+  <div style="display:flex;align-items:center;gap:6px">
+    <button class="hdr-btn" id="settings-btn" aria-label="Settings"><i class="fas fa-cog"></i> Settings</button>
+    <button class="hdr-btn" id="help-btn" aria-label="Help"><i class="fas fa-question-circle"></i></button>
+    <a class="hdr-btn" href="https://github.com/benneberg/infographic-studio" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+  </div>
+</header>
+<main>
+  <aside id="input-panel" role="complementary" aria-label="Source input">
+    <div class="pnl-hdr">
+      <div class="pnl-row"><div class="pnl-title"><i class="fab fa-github"></i> GitHub Repository</div></div>
+      <div class="gh-row">
+        <input class="gh-input" id="gh-url" placeholder="owner/repo or full URL" spellcheck="false" aria-label="GitHub repo">
+        <button class="gh-fetch" id="gh-fetch-btn"><i class="fas fa-download"></i> Fetch</button>
+      </div>
+      <div class="gh-meta" id="gh-meta"></div>
+      <div class="or-divider">or paste source directly</div>
+      <div class="pnl-row">
+        <select class="tmpl-sel" id="tmpl-sel" aria-label="Template"><option value="readme">Product README</option><option value="api">API Documentation</option><option value="proposal">Project Proposal</option><option value="empty">Blank</option></select>
+        <button class="sm-btn" id="load-sample-btn">Load Sample</button>
+      </div>
+    </div>
+    <textarea id="source-input" placeholder="Paste your README, documentation, or project description here...&#10;&#10;Supports Markdown: # headings, - bullets, 1. numbered lists, **bold**" spellcheck="false" aria-label="Source text"></textarea>
+    <div class="inp-footer">
+      <div style="display:flex;align-items:center;gap:8px"><span class="char-ct" id="char-ct">0 / 38,000</span><span class="mode-badge rule" id="mode-badge">Rule-based</span></div>
+      <button id="gen-btn" disabled>Generate <span class="shortcut">Ctrl+Enter</span></button>
+    </div>
+  </aside>
+  <section id="output-panel" role="main" aria-label="Infographic output">
+    <div id="empty-state">
+      <div class="empty-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+      <div class="empty-title">Turn repos into visuals</div>
+      <div class="empty-desc">Enter a GitHub repo URL to fetch its README and metadata, or paste source material directly. Configure AI providers in Settings for smarter analysis.</div>
+    </div>
+    <div id="infographic-container">
+      <div class="out-toolbar">
+        <div class="tb-left" id="sec-chips"></div>
+        <div class="tb-right">
+          <div class="tm-drop"><button class="tb-btn" id="theme-btn"><i class="fas fa-palette"></i> Theme</button><div class="tm-menu" id="theme-menu" role="menu"></div></div>
+          <button class="tb-btn" id="export-svg-btn"><i class="fas fa-code"></i> SVG</button>
+          <button class="tb-btn" id="export-png-btn"><i class="fas fa-image"></i> PNG</button>
+          <button class="tb-btn" id="fs-btn"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+      <div id="infographic-wrapper"></div>
+    </div>
+    <div id="loading-overlay"><div class="ld-dots"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div><div class="ld-text" id="ld-text">Analyzing content...</div></div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-card">
+    <div class="modal-hdr">
+      <h2><i class="fas fa-cog" style="color:var(--accent);margin-right:8px;font-size:15px"></i>Settings</h2>
+      <button class="modal-close" id="settings-close" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="ai"><i class="fas fa-brain" style="margin-right:5px"></i>AI Providers</button>
+      <button class="modal-tab" data-tab="github"><i class="fab fa-github" style="margin-right:5px"></i>GitHub</button>
+      <button class="modal-tab" data-tab="customize"><i class="fas fa-palette" style="margin-right:5px"></i>Customize</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-panel active" id="tab-ai">
+        <div class="fg">
+          <div class="fl"><span>Default Provider</span></div>
+          <select class="fi-sel" id="set-provider"><option value="groq">Groq (Fast Inference)</option><option value="openrouter">OpenRouter</option><option value="none">None (Rule-based only)</option></select>
+          <div class="fh">Falls back to rule-based if the selected provider has no key or the call fails.</div>
+        </div>
+        <div class="fg">
+          <div class="fl"><span>Groq API Key</span><div style="display:flex;align-items:center;gap:5px"><span class="sdot" id="groq-status"></span><button class="tbtn" id="groq-test">Test</button></div></div>
+          <div class="fiw"><input class="fi" type="password" id="set-groq-key" placeholder="gsk_..." autocomplete="off"><button class="tbtn" onclick="toggleVis('set-groq-key')" aria-label="Toggle"><i class="fas fa-eye"></i></button></div>
+          <div class="fh">Free tier at <strong style="color:var(--fg)">console.groq.com</strong>. Test also loads available models.</div>
+        </div>
+        <div class="fg">
+          <div class="fl"><span>Groq Model</span><button class="tbtn" id="groq-refresh" title="Refresh model list"><i class="fas fa-sync-alt"></i></button></div>
+          <select class="fi-sel" id="set-groq-model"><option value="">Connect to load models</option></select>
+        </div>
+        <hr class="divider">
+        <div class="fg">
+          <div class="fl"><span>OpenRouter API Key</span><div style="display:flex;align-items:center;gap:5px"><span class="sdot" id="or-status"></span><button class="tbtn" id="or-test">Test</button></div></div>
+          <div class="fiw"><input class="fi" type="password" id="set-or-key" placeholder="sk-or-..." autocomplete="off"><button class="tbtn" onclick="toggleVis('set-or-key')" aria-label="Toggle"><i class="fas fa-eye"></i></button></div>
+          <div class="fh">Get a key at <strong style="color:var(--fg)">openrouter.ai</strong>. Free models shown.</div>
+        </div>
+        <div class="fg">
+          <div class="fl"><span>OpenRouter Model <span style="font-size:10px;color:var(--success);font-weight:400">(free only)</span></span><button class="tbtn" id="or-refresh" title="Refresh model list"><i class="fas fa-sync-alt"></i></button></div>
+          <select class="fi-sel" id="set-or-model"><option value="">Connect to load models</option></select>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-github">
+        <div class="fg">
+          <div class="fl"><span>Personal Access Token</span><div style="display:flex;align-items:center;gap:5px"><span class="sdot" id="gh-status"></span><button class="tbtn" id="gh-test">Test</button></div></div>
+          <div class="fiw"><input class="fi" type="password" id="set-gh-token" placeholder="ghp_..." autocomplete="off"><button class="tbtn" onclick="toggleVis('set-gh-token')" aria-label="Toggle"><i class="fas fa-eye"></i></button></div>
+          <div class="fh">Required for private repos. Optional for public (rate-limited to 60/hr). Create at <strong style="color:var(--fg)">github.com/settings/tokens</strong>.</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:8px">
+          <div style="font-size:12px;font-weight:600;color:var(--fg);margin-bottom:8px"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:5px"></i>Privacy</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.6">All keys stored <strong style="color:var(--fg)">only in localStorage</strong>. Sent directly to their respective APIs from your browser. No intermediary, no analytics, no tracking.</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-customize"><div id="customize-content"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-s" id="settings-clear">Clear All Keys</button>
+      <button class="btn-p" id="settings-save">Save Settings</button>
+    </div>
+  </div>
+</div>
+<div id="toast-container" aria-live="polite"></div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS (top-level, no dependencies)
+// ============================================================
+const $ = id => document.getElementById(id);
+const DEFAULT_FF = "'Space Grotesk', sans-serif";
+
+function isMeaningful(value, type) {
+  if (value === undefined || value === null) return false;
+  if (typeof value === 'number') {
+    if (type === 'stars' || type === 'forks' || type === 'count') return value >= 10;
+    if (type === 'metric' || type === 'percent') return value > 0;
+    return true;
+  }
+  if (typeof value === 'string') return value.trim().length >= 3;
+  return true;
+}
+
+function fmtNum(n) {
+  if (n === undefined || n === null) return '0';
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k';
+  return String(n);
+}
+
+function hexToRgb(hex) {
+  if (!hex || hex.length < 7) return '245,158,11';
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  return r + ',' + g + ',' + b;
+}
+
+function trunc(t, m) { if (!t) return ''; const c = t.replace(/\s+/g, ' ').trim(); return c.length <= m ? c : c.slice(0, m - 3).trim() + '...'; }
+function esc(s) { if (!s) return ''; return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function slug(t) { return (t || 'infographic').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 60); }
+function wrapT(text, mc) { if (!text) return []; const words = text.split(' '), lines = []; let cur = ''; for (const w of words) { if ((cur + ' ' + w).trim().length > mc && cur.length > 0) { lines.push(cur.trim()); cur = w } else cur = (cur + ' ' + w).trim() } if (cur.trim()) lines.push(cur.trim()); return lines; }
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const MAX_CHARS = 38000, W = 800, PAD = 60, CW = W - PAD * 2, BASE_GAP = 40;
+
+const THEMES = {
+  midnight: { name: 'Midnight', swatch: '#0F1117', bg: '#0F1117', card: '#1A1D27', cardBorder: '#2A2D38', textPrimary: '#F1F3F5', textSecondary: '#8B919A', accent: '#F59E0B', accentRgb: '245,158,11', success: '#10B981', successRgb: '16,185,129', danger: '#EF4444', dangerRgb: '239,68,68', sectionLabel: '#6B7280', dotGrid: 'rgba(255,255,255,0.025)', footerBg: '#0A0C10', glowColor: 'rgba(245,158,11,0.08)' },
+  arctic: { name: 'Arctic', swatch: '#F8FAFC', bg: '#F8FAFC', card: '#FFFFFF', cardBorder: '#E2E8F0', textPrimary: '#0F172A', textSecondary: '#64748B', accent: '#2563EB', accentRgb: '37,99,235', success: '#059669', successRgb: '5,150,105', danger: '#DC2626', dangerRgb: '220,38,38', sectionLabel: '#94A3B8', dotGrid: 'rgba(0,0,0,0.03)', footerBg: '#F1F5F9', glowColor: 'rgba(37,99,235,0.06)' },
+  emerald: { name: 'Emerald', swatch: '#0A1A14', bg: '#0A1A14', card: '#0F2920', cardBorder: '#1A4035', textPrimary: '#E8F5F0', textSecondary: '#7DB8A4', accent: '#34D399', accentRgb: '52,211,153', success: '#34D399', successRgb: '52,211,153', danger: '#F87171', dangerRgb: '248,113,113', sectionLabel: '#4A8B76', dotGrid: 'rgba(52,211,153,0.025)', footerBg: '#071510', glowColor: 'rgba(52,211,153,0.08)' },
+  crimson: { name: 'Crimson', swatch: '#1A0F0F', bg: '#1A0F0F', card: '#271414', cardBorder: '#3D2020', textPrimary: '#F5E8E8', textSecondary: '#B88B8B', accent: '#F97316', accentRgb: '249,115,22', success: '#22C55E', successRgb: '34,197,94', danger: '#EF4444', dangerRgb: '239,68,68', sectionLabel: '#8B5A5A', dotGrid: 'rgba(249,115,22,0.025)', footerBg: '#140A0A', glowColor: 'rgba(249,115,22,0.08)' }
+};
+
+const FONT_OPTIONS = [
+  { value: "'Space Grotesk', sans-serif", label: 'Space Grotesk' },
+  { value: "'Inter', sans-serif", label: 'Inter' },
+  { value: "'DM Sans', sans-serif", label: 'DM Sans' },
+  { value: "'Outfit', sans-serif", label: 'Outfit' },
+  { value: "'Plus Jakarta Sans', sans-serif", label: 'Plus Jakarta Sans' },
+  { value: "system-ui, -apple-system, sans-serif", label: 'System UI' }
+];
+
+function getCustomTheme() {
+  const raw = store.get('custom_theme', null);
+  if (!raw) return null;
+  const rgb = hexToRgb(raw.accent);
+  return {
+    name: 'Custom', swatch: raw.bg,
+    bg: raw.bg, card: raw.card, cardBorder: raw.cardBorder,
+    textPrimary: raw.textPrimary, textSecondary: raw.textSecondary,
+    accent: raw.accent, accentRgb: rgb,
+    success: raw.success || '#10B981', successRgb: hexToRgb(raw.success || '#10B981'),
+    danger: raw.danger || '#EF4444', dangerRgb: hexToRgb(raw.danger || '#EF4444'),
+    sectionLabel: raw.sectionLabel, footerBg: raw.footerBg,
+    dotGrid: 'rgba(' + rgb + ',0.025)', glowColor: 'rgba(' + rgb + ',0.08)',
+    _font: raw.font || DEFAULT_FF
+  };
+}
+
+function getTheme(name) {
+  if (name === 'custom') return getCustomTheme();
+  return THEMES[name] || THEMES.midnight;
+}
+
+const TECH_KW = ['React','Vue','Angular','Svelte','Next.js','Nuxt','Gatsby','Astro','Node.js','Deno','Bun','Express','Fastify','Koa','Hono','NestJS','TypeScript','JavaScript','Python','Go','Rust','Java','Kotlin','Swift','C++','C#','Ruby','PHP','Elixir','Haskell','Zig','PostgreSQL','MySQL','MongoDB','Redis','SQLite','CockroachDB','DynamoDB','Supabase','PlanetScale','Docker','Kubernetes','Terraform','Pulumi','Ansible','Helm','AWS','GCP','Azure','Vercel','Netlify','Cloudflare','Railway','Fly.io','Render','Heroku','GraphQL','REST','gRPC','WebSocket','tRPC','Tailwind CSS','Sass','Webpack','Vite','esbuild','Turbopack','Jest','Vitest','Playwright','Cypress','Prisma','Drizzle','TypeORM','Sequelize','Mongoose','Redux','Zustand','Jotai','Three.js','D3.js','Linux','Nginx','Elasticsearch','Kafka','RabbitMQ','Git','GitHub','GitLab','OAuth','JWT','Stripe','Sentry','Datadog','Grafana','Figma','Storybook','Wasm','Tauri','Electron','React Native','Flutter','LangChain','OpenAI','Anthropic','htmx','Alpine.js','Laravel','Django','Flask','FastAPI','Spring Boot'];
+
+const SEC_PATTERNS = { problem: /\b(problem|pain\s*point|challenge|why\s+(we|this)|motivation|gap|frustrat|struggle)\b/i, solution: /\b(solution|approach|how\s+(we|it)\s+work|what\s+we\s+built|our\s+approach|resolution)\b/i, features: /\b(feature|capability|highlight|what\s+(it|you)\s+(does|can)|key\s+(capabilit|feature)|functionality)\b/i, 'tech-stack': /\b(tech\s*stack|built\s*with|dependencies|powered\s*by|technolog|under\s*the\s*hood|stack)\b/i, 'getting-started': /\b(install|setup|quick\s*start|getting\s*started|prerequisite)\b/i, architecture: /\b(architecture|design|structure|component\s*overview|system\s*design)\b/i, api: /\b(api|endpoint|route|request|response|http)\b/i, usage: /\b(usage|example|how\s+to\s+use|basic)\b/i, contributing: /\b(contribut|develop)\b/i, roadmap: /\b(roadmap|plan|future|next\s+step|coming)\b/i, metrics: /\b(benchmark|performance|metric|stat|by\s+the\s+number|result)\b/i };
+
+const SAMPLES = { readme: `# CloudScale\n\nThe modern infrastructure platform that lets teams deploy, scale, and monitor cloud applications in minutes, not days. Eliminate configuration drift and reduce operational overhead with a single declarative config.\n\n## The Problem\n\nManaging cloud infrastructure is fragmented across dozens of tools. Teams spend 40% of their time on operational overhead instead of building products. Configuration drift, inconsistent environments, and manual scaling lead to 3x more incidents than necessary.\n\n## Our Solution\n\nCloudScale unifies infrastructure management into a single declarative configuration. Define your desired state once, and our engine handles provisioning, scaling, healing, and observability across all major cloud providers.\n\n## Key Features\n\n- **Zero-config scaling** — Automatically adjusts resources based on real-time demand patterns\n- **Multi-cloud abstraction** — Write once, deploy to AWS, GCP, and Azure without changes\n- **Drift detection** — Catches and auto-remediates configuration changes within 30 seconds\n- **Cost optimization** — Reduces cloud spend by 35% on average through intelligent right-sizing\n- **GitOps workflow** — All changes through pull requests with full audit trail\n- **Built-in observability** — Metrics, logs, and traces out of the box\n\n## Tech Stack\n\n- Go (core control plane engine)\n- TypeScript (CLI and web dashboard)\n- Terraform (provider abstraction layer)\n- PostgreSQL (state management)\n- Redis (caching and real-time events)\n- Kubernetes (data plane orchestration)\n\n## Quick Start\n\n1. Install the CLI with \`npm install -g @cloudscale/cli\`\n2. Authenticate with \`cloudscale auth login\`\n3. Initialize your project with \`cloudscale init\`\n4. Deploy with \`cloudscale apply --env production\`\n\n## By the Numbers\n\n- 99.99% uptime SLA guaranteed\n- 10,000+ deployments per day\n- 500+ enterprise customers\n- 35% average cost reduction\n- 12ms median API latency\n\n## Architecture\n\nCloudScale uses a control plane / data plane split. The control plane runs in our managed environment and handles state management, policy enforcement, and API routing.\n\n## Roadmap\n\n- **Q1 2025**: Windows and ARM support\n- **Q2 2025**: Custom provider SDK\n- **Q3 2025**: AI-powered cost recommendations\n- **Q4 2025**: Edge deployment support`, api: `# PaymentGateway API\n\nA unified payment processing API that abstracts across Stripe, PayPal, and Adyen. One integration, every payment method, full PCI compliance.\n\n## The Problem\n\nIntegrating multiple payment providers means maintaining separate SDKs, handling different webhook formats, and reconciling discrepancies between provider dashboards.\n\n## Our Solution\n\nPaymentGateway provides a single RESTful API that normalizes requests and responses across providers.\n\n## Endpoints\n\n- **POST /v1/charges** — Create a new charge with automatic provider routing\n- **GET /v1/charges/:id** — Retrieve charge status\n- **POST /v1/refunds** — Issue refunds with partial amount support\n- **GET /v1/balance** — Aggregate balance across accounts\n- **POST /v1/webhooks/verify** — Verify and normalize webhooks\n\n## Key Features\n\n- **Provider abstraction** — Switch between Stripe, PayPal, Adyen with zero code changes\n- **Automatic failover** — Routes to backup provider if primary is down\n- **Webhook normalization** — All providers map to a single schema\n- **Idempotency keys** — Built-in deduplication prevents double-charging\n- **Real-time metrics** — Latency, success rate, and volume per provider\n\n## Tech Stack\n\n- Node.js with Fastify\n- PostgreSQL with PgBouncer\n- Redis for idempotency and rate limiting\n- Kafka for async webhook processing\n- Docker and Kubernetes\n\n## Performance\n\n- 99.95% availability over 12 months\n- 45ms average response time at p99\n- 2 million transactions daily\n- 99.7% webhook delivery within 5 seconds`, proposal: `# Project Aurora\n\nA next-generation developer portal that unifies documentation, API exploration, and SDK generation. Target: Q2 2025.\n\n## Background\n\nDeveloper experience is the new competitive moat. Companies like Stripe and Vercel have shown that best-in-class developer portals directly correlate with adoption.\n\n## Opportunity\n\nBy consolidating touchpoints into one portal: 40% reduction in time-to-first-call, 25% increase in developer NPS, 30% reduction in support tickets.\n\n## Proposed Features\n\n- **Unified search** — Across docs, API specs, and community posts\n- **Interactive API explorer** — Try endpoints directly in docs\n- **Auto-generated SDKs** — OpenAPI to typed SDKs in 8 languages\n- **Embedded code playground** — Run samples with WebContainers\n- **Community layer** — Questions and snippets alongside docs\n- **Analytics dashboard** — Which docs drive adoption\n\n## Technical Approach\n\n- Next.js 14 with App Router\n- MDX with custom components\n- WebContainers for in-browser execution\n- Algolia for search\n- PostgreSQL with pgvector\n- Kafka for SDK generation pipeline\n\n## Success Metrics\n\n- Time to first API call under 5 minutes\n- Developer NPS above 70\n- 50% month-over-month growth\n- 30% support ticket reduction in 6 months\n\n## Timeline\n\n1. **Month 1-2**: Core shell, MDX pipeline, search\n2. **Month 3-4**: API explorer, playground\n3. **Month 5**: SDK auto-generation\n4. **Month 6**: Community, analytics, beta` };
+
+// ============================================================
+// STATE
+// ============================================================
+var S = { parsedDoc: null, spec: null, ghMeta: null, theme: 'midnight', variants: {}, fs: false, analysisMode: 'rule', analysisModel: '' };
+var modelCache = { groq: null, or: null, groqTime: 0, orTime: 0 };
+var CACHE_TTL = 3600000;
+
+// ============================================================
+// LOCAL STORAGE
+// ============================================================
+var store = {
+  get: function(k, d) { try { var v = localStorage.getItem('is_' + k); return v !== null ? JSON.parse(v) : d } catch(e) { return d } },
+  set: function(k, v) { try { localStorage.setItem('is_' + k, JSON.stringify(v)) } catch(e) {} },
+  clear: function(k) { try { localStorage.removeItem('is_' + k) } catch(e) {} }
+};
+
+// ============================================================
+// GITHUB API
+// ============================================================
+function parseRepoUrl(input) {
+  input = input.trim().replace(/\/+$/, '');
+  var m = input.match(/^([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)$/);
+  if (m) return { owner: m[1], repo: m[2] };
+  m = input.match(/github\.com\/([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)/);
+  if (m) return { owner: m[1], repo: m[2] };
+  return null;
+}
+
+function fetchGitHub(repoInput) {
+  var parsed = parseRepoUrl(repoInput);
+  if (!parsed) return Promise.reject(new Error('Could not parse repo URL. Use: owner/repo'));
+  var token = store.get('gh_token', ''), headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (token) headers['Authorization'] = 'token ' + token;
+  return Promise.all([
+    fetch('https://api.github.com/repos/' + parsed.owner + '/' + parsed.repo, { headers: headers }),
+    fetch('https://api.github.com/repos/' + parsed.owner + '/' + parsed.repo + '/readme', { headers: headers }).catch(function() { return null })
+  ]).then(function(results) {
+    var repoRes = results[0], readmeRes = results[1];
+    if (!repoRes.ok) {
+      if (repoRes.status === 404) throw new Error('Repository not found. If private, add a GitHub token in Settings.');
+      if (repoRes.status === 403) throw new Error('Rate limited. Add a GitHub token in Settings.');
+      throw new Error('GitHub API error: ' + repoRes.status);
+    }
+    return repoRes.json().then(function(rd) {
+      var readme = '';
+      if (readmeRes && readmeRes.ok) {
+        return readmeRes.json().then(function(rmd) {
+          try { readme = decodeURIComponent(escape(atob(rmd.content.replace(/\n/g, '')))) } catch(e) { readme = atob(rmd.content.replace(/\n/g, '')) }
+          return {
+            metadata: { name: rd.name, description: rd.description, stars: rd.stargazers_count, forks: rd.forks_count, language: rd.language, license: rd.license ? rd.license.name : null, topics: rd.topics || [], url: rd.html_url },
+            readme: readme
+          };
+        });
+      }
+      return {
+        metadata: { name: rd.name, description: rd.description, stars: rd.stargazers_count, forks: rd.forks_count, language: rd.language, license: rd.license ? rd.license.name : null, topics: rd.topics || [], url: rd.html_url },
+        readme: readme
+      };
+    });
+  });
+}
+
+function showGitHubMeta(meta) {
+  var el = $('gh-meta');
+  if (!meta) { el.classList.remove('active'); return; }
+  el.classList.add('active');
+  var h = '';
+  if (isMeaningful(meta.stars, 'stars')) h += '<span class="gh-meta-item"><i class="fas fa-star" style="color:var(--accent)"></i> <strong>' + fmtNum(meta.stars) + '</strong></span>';
+  if (isMeaningful(meta.forks, 'forks')) h += '<span class="gh-meta-item"><i class="fas fa-code-branch" style="color:var(--muted)"></i> <strong>' + fmtNum(meta.forks) + '</strong></span>';
+  if (meta.language) h += '<span class="gh-meta-item"><i class="fas fa-circle" style="color:var(--success);font-size:8px"></i> <strong>' + esc(meta.language) + '</strong></span>';
+  if (meta.license) h += '<span class="gh-meta-item"><i class="fas fa-scale-balanced" style="color:var(--muted)"></i> ' + esc(meta.license) + '</span>';
+  if (meta.topics && meta.topics.length) h += '<span class="gh-meta-item" style="color:var(--accent);font-size:10px">' + meta.topics.slice(0, 5).join(' · ') + '</span>';
+  el.innerHTML = h;
+}
+
+// ============================================================
+// MODEL FETCHING
+// ============================================================
+function fetchGroqModels(key) {
+  return fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': 'Bearer ' + key } }).then(function(r) {
+    if (!r.ok) throw new Error('Groq models fetch failed: ' + r.status);
+    return r.json();
+  }).then(function(d) {
+    return d.data.map(function(m) { return m.id }).filter(function(id) { return id.indexOf('whisper') < 0 && id.indexOf('tts') < 0 && id.indexOf('distil') < 0 && id.indexOf('guard') < 0 }).sort();
+  });
+}
+
+function fetchORModels(key) {
+  return fetch('https://openrouter.ai/api/v1/models', { headers: { 'Authorization': 'Bearer ' + key } }).then(function(r) {
+    if (!r.ok) throw new Error('OpenRouter models fetch failed: ' + r.status);
+    return r.json();
+  }).then(function(d) {
+    return d.data.filter(function(m) {
+      return parseFloat(m.pricing && m.pricing.prompt || '1') === 0 && parseFloat(m.pricing && m.pricing.completion || '1') === 0;
+    }).map(function(m) { return { id: m.id, name: m.name || m.id.split('/').pop() } }).sort(function(a, b) { return a.id.localeCompare(b.id) });
+  });
+}
+
+function populateModelDropdown(selectEl, models, currentVal) {
+  var prev = selectEl.value;
+  selectEl.innerHTML = '';
+  if (!models || models.length === 0) { selectEl.innerHTML = '<option value="">No models found</option>'; return; }
+  models.forEach(function(m) {
+    var opt = document.createElement('option');
+    if (typeof m === 'string') { opt.value = m; opt.textContent = m; }
+    else { opt.value = m.id; opt.textContent = m.name || m.id; }
+    selectEl.appendChild(opt);
+  });
+  if (models.some(function(m) { return (typeof m === 'string' ? m === prev : m.id === prev) })) selectEl.value = prev;
+  else if (currentVal && models.some(function(m) { return (typeof m === 'string' ? m === currentVal : m.id === currentVal) })) selectEl.value = currentVal;
+}
+
+function refreshGroqModels() {
+  var key = $('set-groq-key').value.trim();
+  if (!key) { populateModelDropdown($('set-groq-model'), null); return Promise.resolve(); }
+  return fetchGroqModels(key).then(function(models) {
+    modelCache.groq = models; modelCache.groqTime = Date.now();
+    populateModelDropdown($('set-groq-model'), models, store.get('groq_model', ''));
+    toast('Loaded ' + models.length + ' Groq models');
+  }).catch(function(e) {
+    populateModelDropdown($('set-groq-model'), null);
+    toast('Failed to load Groq models', 'error');
+  });
+}
+
+function refreshORModels() {
+  var key = $('set-or-key').value.trim();
+  if (!key) { populateModelDropdown($('set-or-model'), null); return Promise.resolve(); }
+  return fetchORModels(key).then(function(models) {
+    modelCache.or = models; modelCache.orTime = Date.now();
+    populateModelDropdown($('set-or-model'), models, store.get('or_model', ''));
+    toast('Loaded ' + models.length + ' free OpenRouter models');
+  }).catch(function(e) {
+    populateModelDropdown($('set-or-model'), null);
+    toast('Failed to load OpenRouter models', 'error');
+  });
+}
+
+// ============================================================
+// AI API
+// ============================================================
+var AI_SYSTEM = 'You are an infographic content extractor. Given source material about a software project, extract key information into a JSON infographic spec.\n\nRULES:\n- Only include information actually present. Never invent claims.\n- Descriptions: 1-2 sentences max, under 150 characters.\n- Extract exact metrics/numbers when available.\n- Identify tech stack from mentioned technologies.\n- If a section type has no supporting content, OMIT it entirely.\n- Feature titles: under 40 chars. Tech items: well-known names only.\n- Max 6 features, 6 stats, 12 tech items, 5 steps.\n\nOUTPUT JSON only (no markdown, no explanation):\n{"title":"Name","subtitle":"One line","sections":[{"type":"stats","items":[{"value":"99.9%","label":"Uptime"}]},{"type":"problem-solution","problemTitle":"The Problem","problem":"text","solutionTitle":"The Solution","solution":"text"},{"type":"features","title":"Features","columns":3,"items":[{"title":"Short","description":"Brief"}]},{"type":"tech-stack","title":"Tech Stack","items":["React"]},{"type":"steps","title":"Getting Started","items":[{"step":1,"title":"Title","description":"Desc"}]}]}';
+
+function analyzeWithAI(content, ghMeta) {
+  var provider = store.get('provider', 'none');
+  var apiKey = provider === 'groq' ? store.get('groq_key', '') : provider === 'openrouter' ? store.get('or_key', '') : '';
+  if (!apiKey || provider === 'none') return Promise.resolve(null);
+  var model = provider === 'groq' ? $('set-groq-model').value : $('set-or-model').value;
+  if (!model) return Promise.resolve(null);
+  var endpoint = provider === 'groq' ? 'https://api.groq.com/openai/v1/chat/completions' : 'https://openrouter.ai/api/v1/chat/completions';
+  var userMsg = 'Source material:\n---\n' + content + '\n---';
+  if (ghMeta) userMsg += '\n\nGitHub metadata:\n---\n' + JSON.stringify(ghMeta, null, 2) + '\n---';
+  var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey };
+  if (provider === 'openrouter') { headers['HTTP-Referer'] = window.location.origin; headers['X-Title'] = 'Infographic Studio' }
+  return fetch(endpoint, {
+    method: 'POST', headers: headers,
+    body: JSON.stringify({ model: model, messages: [{ role: 'system', content: AI_SYSTEM }, { role: 'user', content: userMsg }], temperature: 0.15, max_tokens: 4000 })
+  }).then(function(res) {
+    if (!res.ok) return res.json().catch(function() { return {} }).then(function(err) { throw new Error('AI ' + res.status + ': ' + (err.error && err.error.message || res.statusText)) });
+    return res.json();
+  }).then(function(data) {
+    var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!text) throw new Error('Empty AI response');
+    text = text.trim();
+    if (text.indexOf('```') === 0) text = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    var spec = JSON.parse(text);
+    if (!spec.title) throw new Error('Invalid spec: missing title');
+    if (!Array.isArray(spec.sections)) spec.sections = [];
+    spec.sections.forEach(function(s, i) { if (!s.id) s.id = s.type + '-' + i });
+    return { spec: spec, provider: provider, model: model };
+  });
+}
+
+// ============================================================
+// MARKDOWN PARSER
+// ============================================================
+function parseMD(text) {
+  var lines = text.split('\n'), doc = { title: '', subtitle: '', sections: [] };
+  var cur = null, inCode = false, hasSub = false;
+  for (var li = 0; li < lines.length; li++) {
+    var raw = lines[li];
+    if (raw.trim().indexOf('```') === 0) { inCode = !inCode; continue }
+    if (inCode) continue;
+    if (raw.trim() === '---' || raw.trim() === '***') continue;
+    if (raw.indexOf('# ') === 0 && raw.indexOf('## ') !== 0) { doc.title = raw.slice(2).trim().replace(/\*\*/g, '') }
+    else if (raw.indexOf('## ') === 0) { cur = { level: 2, title: raw.slice(3).trim().replace(/\*\*/g, ''), content: [], lists: [], rawText: '' }; doc.sections.push(cur) }
+    else if (raw.indexOf('### ') === 0) { cur = { level: 3, title: raw.slice(4).trim().replace(/\*\*/g, ''), content: [], lists: [], rawText: '' }; doc.sections.push(cur) }
+    else if (/^[-*]\s+/.test(raw)) { if (cur) cur.lists.push(raw.replace(/^[-*]\s+/, '').trim()) }
+    else if (/^\d+\.\s+/.test(raw)) { if (cur) cur.lists.push(raw.replace(/^\d+\.\s+/, '').trim()) }
+    else if (raw.trim() === '') continue;
+    else { var c = raw.trim().replace(/\*\*/g, '').replace(/\*/g, '').replace(/`([^`]+)`/g, '$1'); if (cur) { cur.content.push(c); cur.rawText += c + ' ' } else if (doc.title && !hasSub && c.length > 10) { doc.subtitle = c; hasSub = true } }
+  }
+  return doc;
+}
+
+// ============================================================
+// RULE-BASED ANALYZER
+// ============================================================
+function classifySec(s) {
+  var t = (s.title + ' ' + s.rawText).toLowerCase();
+  var best = 'generic', bs = 0;
+  for (var type in SEC_PATTERNS) {
+    var pat = SEC_PATTERNS[type]; var m = t.match(pat);
+    if (m && m.length > bs) { bs = m.length; best = type }
+  }
+  return best;
+}
+
+function extractMetrics(text) {
+  var metrics = [];
+  var pats = [
+    { re: /(\d+\.?\d*)%?\s*(uptime|availability|reliability|coverage|accuracy)/gi, lf: function(m) { return m[2].charAt(0).toUpperCase() + m[2].slice(1) } },
+    { re: /(\d+\.?\d*)\+?\s*(users?|customers?|downloads?|stars?|installs?|developers?|teams?|subscribers?|repos?)/gi, lf: function(m) { return m[2].charAt(0).toUpperCase() + m[2].slice(1) } },
+    { re: /(\d+\.?\d*)\+?\s*(deployments?|transactions?|requests?|calls?|events?|messages?|builds?|releases?|integrations?|plugins?|components?|templates?|languages?|providers?|endpoints?)/gi, lf: function(m) { return m[2].charAt(0).toUpperCase() + m[2].slice(1) } },
+    { re: /(\d+\.?\d*)\s*(ms|seconds?|sec|milliseconds?)/gi, lf: function(m) { return m[2].toUpperCase() + ' Latency' } },
+    { re: /(\d+\.?\d*)%?\s*(reduction|improvement|increase|faster|savings?|cheaper|growth)/gi, lf: function(m) { return m[2].charAt(0).toUpperCase() + m[2].slice(1) } },
+    { re: /(under|less than|within)\s*(\d+)\s*(minutes?|hours?|seconds?|days?)/gi, lf: function(m) { return '< ' + m[2] + ' ' + m[3] } }
+  ];
+  pats.forEach(function(p) {
+    var rx = new RegExp(p.re.source, p.re.flags); var m;
+    while ((m = rx.exec(text)) !== null) metrics.push({ value: m[1] || m[0], label: p.lf(m) });
+  });
+  var seen = {}; return metrics.filter(function(m) { if (seen[m.label]) return false; seen[m.label] = true; return true });
+}
+
+function extractTech(text) {
+  var found = [], low = text.toLowerCase();
+  TECH_KW.forEach(function(t) {
+    var esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp('\\b' + esc + '\\b', 'i').test(low) && found.indexOf(t) < 0) found.push(t);
+  });
+  return found;
+}
+
+function splitFeat(text) {
+  var pats = [/^(.+?)\s*[—–-]\s*(.+)$/, /^(.+?)\s*:\s*(.+)$/];
+  for (var i = 0; i < pats.length; i++) {
+    var m = text.match(pats[i]);
+    if (m) { var t = m[1].trim().replace(/\*+/g, ''), d = m[2].trim().replace(/\*+/g, ''); if (t.length > 2 && d.length > 5) return { title: t, description: d } }
+  }
+  var c = text.replace(/\*+/g, '').trim();
+  return c.length > 60 ? { title: c.slice(0, 57) + '...', description: '' } : { title: c, description: '' };
+}
+
+function smartTrunc(text, max) {
+  if (text.length <= max) return text;
+  var lines = text.split('\n'), result = []; var len = 0;
+  if (lines[0] && lines[0].indexOf('# ') === 0) { result.push(lines[0]); len += lines[0].length + 1 }
+  var pri = { problem: 5, solution: 5, features: 5, 'tech-stack': 4, metrics: 4, architecture: 3, 'getting-started': 3, usage: 2, api: 2, roadmap: 2, contributing: 1, generic: 1 };
+  var secs = [], cur = [];
+  for (var i = 1; i < lines.length; i++) {
+    var l = lines[i];
+    if (l.indexOf('## ') === 0 || l.indexOf('### ') === 0) {
+      if (cur.length > 0) { secs.push({ lines: cur, pri: pri[classifySec({ title: (cur[0] || '').replace(/^#+\s*/, ''), rawText: cur.join(' ') })] || 1 }); cur = [] }
+      cur = [l];
+    } else cur.push(l);
+  }
+  if (cur.length > 0) secs.push({ lines: cur, pri: pri[classifySec({ title: (cur[0] || '').replace(/^#+\s*/, ''), rawText: cur.join(' ') })] || 1 });
+  secs.sort(function(a, b) { return b.pri - a.pri });
+  for (var j = 0; j < secs.length; j++) {
+    var st = secs[j].lines.join('\n') + '\n';
+    if (len + st.length <= max) { result = result.concat(secs[j].lines); len += st.length }
+  }
+  return result.join('\n');
+}
+
+function buildRuleSpec(doc, vmap) {
+  var spec = { title: doc.title || 'Untitled Project', subtitle: doc.subtitle || '', sections: [] };
+  var cls = doc.sections.map(function(s) { var c = {}; for (var k in s) c[k] = s[k]; c.type = classifySec(s); return c });
+
+  var prob = null, sol = null;
+  for (var i = 0; i < cls.length; i++) { if (cls[i].type === 'problem') prob = cls[i]; if (cls[i].type === 'solution') sol = cls[i]; }
+  var probText = prob ? prob.rawText.trim() : '';
+  var solText = sol ? sol.rawText.trim() : '';
+
+  if (probText.length > 30 && solText.length > 30) {
+    var v = ((vmap && vmap['problem-solution']) || 0) % 3;
+    spec.sections.push({ id: 'problem-solution', type: 'problem-solution', problem: trunc(probText, v === 0 ? 180 : v === 1 ? 120 : 200), solution: trunc(solText, v === 0 ? 180 : v === 1 ? 120 : 200), problemTitle: prob.title || 'The Problem', solutionTitle: sol.title || 'The Solution' });
+  } else if (probText.length > 50) {
+    spec.sections.push({ id: 'content-block', type: 'content-block', title: prob.title || 'Problem', text: trunc(probText, 300) });
+  } else if (solText.length > 50) {
+    spec.sections.push({ id: 'content-block', type: 'content-block', title: sol.title || 'Solution', text: trunc(solText, 300) });
+  }
+
+  var metrics = [];
+  var mSec = null;
+  for (var i = 0; i < cls.length; i++) { if (cls[i].type === 'metrics') { mSec = cls[i]; break } }
+  if (mSec) metrics = extractMetrics(mSec.rawText + ' ' + mSec.lists.join(' '));
+  if (metrics.length < 2) cls.forEach(function(s) { metrics = metrics.concat(extractMetrics(s.rawText + ' ' + s.lists.join(' '))) });
+  var metricSeen = {};
+  metrics = metrics.filter(function(m) { if (metricSeen[m.label]) return false; metricSeen[m.label] = true; return true });
+  if (metrics.length >= 2) {
+    var v = ((vmap && vmap['stats']) || 0) % 2;
+    spec.sections.push({ id: 'stats', type: 'stats', items: metrics.slice(0, v === 0 ? 4 : 3) });
+  }
+
+  var featSrc = null;
+  for (var i = 0; i < cls.length; i++) { if (cls[i].type === 'features') { featSrc = cls[i]; break } }
+  if (!featSrc || featSrc.lists.length < 3) {
+    for (var i = 0; i < cls.length; i++) {
+      if (cls[i].lists.length >= 3 && cls[i].type !== 'getting-started' && cls[i].type !== 'tech-stack' && cls[i].type !== 'metrics') { featSrc = cls[i]; break }
+    }
+  }
+  if (featSrc && featSrc.lists.length >= 3) {
+    var v = ((vmap && vmap['features']) || 0) % 3, cnt = v === 0 ? 6 : v === 1 ? 4 : 3, cols = v === 1 ? 2 : 3;
+    spec.sections.push({ id: 'features', type: 'features', title: featSrc.title, columns: cols, items: featSrc.lists.slice(0, cnt).map(function(f) { return splitFeat(f) }) });
+  }
+
+  var techSec = null;
+  for (var i = 0; i < cls.length; i++) { if (cls[i].type === 'tech-stack') { techSec = cls[i]; break } }
+  var techs = techSec ? extractTech(techSec.rawText + ' ' + techSec.lists.join(' ') + ' ' + techSec.title) : [];
+  if (techs.length < 3) techs = extractTech(doc.title + ' ' + doc.subtitle + ' ' + cls.map(function(s) { return s.rawText + ' ' + s.lists.join(' ') }).join(' '));
+  if (techs.length >= 3) spec.sections.push({ id: 'tech-stack', type: 'tech-stack', title: techSec ? techSec.title : 'Tech Stack', items: techs.slice(0, 12) });
+
+  var stepsSec = null;
+  for (var i = 0; i < cls.length; i++) { if (cls[i].type === 'getting-started' || cls[i].type === 'usage') { stepsSec = cls[i]; break } }
+  if (stepsSec && stepsSec.lists.length >= 2) {
+    spec.sections.push({ id: 'steps', type: 'steps', title: stepsSec.title, items: stepsSec.lists.slice(0, 5).map(function(s, i) { var sp = splitFeat(s); return { step: i + 1, title: sp.title, description: sp.description } }) });
+  }
+
+  if (spec.sections.length < 5) {
+    var usedTypes = { problem: true, solution: true, features: true, 'tech-stack': true, 'getting-started': true, usage: true, metrics: true };
+    for (var i = 0; i < cls.length; i++) {
+      var s = cls[i];
+      if (!usedTypes[s.type] && s.rawText.length > 40) {
+        if (s.lists.length >= 3) spec.sections.push({ id: 'content-list', type: 'content-list', title: s.title, items: s.lists.slice(0, 6).map(function(l) { return splitFeat(l) }) });
+        else if (s.rawText.length > 60) spec.sections.push({ id: 'content-block', type: 'content-block', title: s.title, text: trunc(s.rawText, 300) });
+        break;
+      }
+    }
+  }
+
+  if (spec.sections.length === 0) {
+    var allText = cls.map(function(s) { return s.rawText }).join(' ').trim();
+    if (allText.length > 30) spec.sections.push({ id: 'about', type: 'content-block', title: 'About', text: trunc(allText, 400) });
+    else if (doc.subtitle) spec.sections.push({ id: 'about', type: 'content-block', title: 'About', text: doc.subtitle });
+  }
+
+  return spec;
+}
+
+function mergeGHMeta(spec, meta) {
+  if (!meta) return spec;
+  if (meta.description && !spec.subtitle) spec.subtitle = meta.description;
+  var ghStats = [];
+  if (isMeaningful(meta.stars, 'stars')) ghStats.push({ value: fmtNum(meta.stars), label: 'Stars' });
+  if (isMeaningful(meta.forks, 'forks')) ghStats.push({ value: fmtNum(meta.forks), label: 'Forks' });
+  if (meta.language) ghStats.push({ value: meta.language, label: 'Language' });
+  if (meta.license) ghStats.push({ value: meta.license, label: 'License' });
+  if (ghStats.length > 0) {
+    var stats = null;
+    for (var i = 0; i < spec.sections.length; i++) { if (spec.sections[i].type === 'stats') { stats = spec.sections[i]; break } }
+    if (!stats) { stats = { id: 'stats', type: 'stats', items: [] }; spec.sections.unshift(stats) }
+    stats.items = ghStats.concat(stats.items);
+    var seen = {};
+    stats.items = stats.items.filter(function(m) { if (seen[m.label]) return false; seen[m.label] = true; return true });
+    stats.items = stats.items.slice(0, 6);
+    if (stats.items.length < 2) spec.sections = spec.sections.filter(function(s) { return s.id !== 'stats' });
+  }
+  if (meta.topics && meta.topics.length) {
+    var tech = null;
+    for (var i = 0; i < spec.sections.length; i++) { if (spec.sections[i].type === 'tech-stack') { tech = spec.sections[i]; break } }
+    if (!tech) { tech = { id: 'tech-stack', type: 'tech-stack', title: 'Topics', items: [] }; spec.sections.push(tech) }
+    var ex = {};
+    tech.items.forEach(function(t) { ex[t.toLowerCase()] = true });
+    meta.topics.forEach(function(t) { if (!ex[t.toLowerCase()]) { tech.items.push(t); ex[t.toLowerCase()] = true } });
+    if (tech.items.length < 3) spec.sections = spec.sections.filter(function(s) { return s.id !== 'tech-stack' });
+  }
+  return spec;
+}
+
+// ============================================================
+// SVG RENDERER
+// ============================================================
+function renderSVG(spec, tn) {
+  var t = getTheme(tn);
+  var ff = (t._font) || DEFAULT_FF;
+  var sc = spec.sections.length;
+  var gap = sc > 5 ? 25 : sc > 3 ? 32 : BASE_GAP;
+  var y = 0, parts = [];
+  var defs = '<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(' + t.accentRgb + ',0.2)"/><stop offset="100%" stop-color="rgba(' + t.accentRgb + ',0)"/></linearGradient><linearGradient id="al" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="' + t.accent + '"/><stop offset="100%" stop-color="rgba(' + t.accentRgb + ',0.2)"/></linearGradient><filter id="cs" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="rgba(0,0,0,0.25)"/></filter><pattern id="dg" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="0.7" fill="' + t.dotGrid + '"/></pattern></defs>';
+
+  var hero = rHero(spec, t, y);
+  parts.push(hero.svg);
+  y += hero.height;
+
+  for (var si = 0; si < spec.sections.length; si++) {
+    var sec = spec.sections[si];
+    y += gap;
+    if (sec.type === 'stats') { var h = 110; parts.push(rStats(sec, t, y, h)); y += h }
+    else if (sec.type === 'problem-solution') { var h = 170; parts.push(rPS(sec, t, y, h)); y += h }
+    else if (sec.type === 'features') { var c = sec.columns || 3, r = Math.ceil(sec.items.length / c), h = 50 + r * 110 + (r - 1) * 12; parts.push(rFeats(sec, t, y, h, c)); y += h }
+    else if (sec.type === 'tech-stack') { var r = Math.ceil(sec.items.length / 4), h = 50 + r * 44 + (r - 1) * 10; parts.push(rTech(sec, t, y, h)); y += h }
+    else if (sec.type === 'steps') { var h = 50 + sec.items.length * 70 + (sec.items.length - 1) * 12; parts.push(rSteps(sec, t, y, h)); y += h }
+    else if (sec.type === 'content-list') { var r = Math.ceil(sec.items.length / 2), h = 50 + r * 90 + (r - 1) * 12; parts.push(rCL(sec, t, y, h)); y += h }
+    else if (sec.type === 'content-block') { var h = Math.max(100, 70 + Math.ceil((sec.text || '').length / 70) * 20); parts.push(rCB(sec, t, y, h)); y += h }
+  }
+  y += gap;
+  var fh = 50; parts.push(rFoot(t, y, fh)); y += fh;
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + y + '" viewBox="0 0 ' + W + ' ' + y + '" role="img" aria-label="Infographic for ' + esc(spec.title) + '" style="font-family:' + ff + ';"><title>' + esc(spec.title) + '</title><desc>' + esc(spec.subtitle || 'Auto-generated infographic') + '</desc>' + defs + '<rect width="' + W + '" height="' + y + '" fill="' + t.bg + '"/><rect width="' + W + '" height="' + y + '" fill="url(#dg)"/>' + parts.join('') + '</svg>';
+}
+
+function rHero(s, t, y) {
+  var fontSize = 34, lines = wrapT(s.title, Math.floor(CW / (fontSize * 0.55)));
+  if (lines.length > 2) { fontSize = 28; lines = wrapT(s.title, Math.floor(CW / (fontSize * 0.55))) }
+  if (lines.length > 3) { lines = lines.slice(0, 3); lines[2] = trunc(lines[2], Math.floor(CW / (fontSize * 0.55)) - 3) }
+  var lineH = fontSize * 1.24, titleH = lines.length * lineH;
+  var hasSub = s.subtitle && s.subtitle.length > 0;
+  var subH = hasSub ? wrapT(s.subtitle, 80).length * 22 + 8 : 0;
+  var h = Math.max(100, 55 + titleH + subH + 25);
+  var titleStartY = y + 55 + (h - 55 - titleH - subH) / 2;
+  var svg = '<rect x="0" y="' + y + '" width="' + W + '" height="' + h + '" fill="' + t.glowColor + '" aria-hidden="true"/><ellipse cx="' + (W - 80) + '" cy="' + (y + h / 2) + '" rx="200" ry="' + (h / 2 + 20) + '" fill="url(#hg)" aria-hidden="true"/><rect x="' + PAD + '" y="' + (y + h - 2) + '" width="120" height="3" rx="1.5" fill="url(#al)" aria-hidden="true"/>';
+  for (var i = 0; i < lines.length; i++) svg += '<text x="' + PAD + '" y="' + (titleStartY + i * lineH) + '" font-size="' + fontSize + '" font-weight="800" fill="' + t.textPrimary + '" letter-spacing="-0.5">' + esc(lines[i]) + '</text>';
+  if (hasSub) { var subLines = wrapT(s.subtitle, 80); for (var i = 0; i < subLines.length; i++) svg += '<text x="' + PAD + '" y="' + (titleStartY + titleH + 8 + i * 22) + '" font-size="16" font-weight="400" fill="' + t.textSecondary + '">' + esc(subLines[i]) + '</text>' }
+  return { svg: svg, height: h };
+}
+
+function rStats(s, t, y, h) {
+  var n = s.items.length, g = 14, cw = (CW - g * (n - 1)) / n;
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">KEY METRICS</text>';
+  for (var i = 0; i < n; i++) { var it = s.items[i], x = PAD + i * (cw + g); svg += '<g><rect x="' + x + '" y="' + (y + 30) + '" width="' + cw + '" height="' + (h - 30) + '" rx="10" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1" filter="url(#cs)"/><rect x="' + x + '" y="' + (y + 30) + '" width="' + cw + '" height="3" rx="1.5" fill="' + t.accent + '" opacity="0.6" aria-hidden="true"/><text x="' + (x + cw / 2) + '" y="' + (y + 72) + '" text-anchor="middle" font-size="28" font-weight="800" fill="' + t.accent + '">' + esc(it.value) + '</text><text x="' + (x + cw / 2) + '" y="' + (y + 96) + '" text-anchor="middle" font-size="11" font-weight="500" fill="' + t.textSecondary + '">' + esc(it.label) + '</text></g>' }
+  return svg;
+}
+
+function rPS(s, t, y, h) {
+  var aw = 40, bw = (CW - aw) / 2, bh = h - 50, by = y + 50;
+  var pl = wrapT(s.problem, 50, 13), sl = wrapT(s.solution, 50, 13);
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">PROBLEM → SOLUTION</text>';
+  svg += '<g><rect x="' + PAD + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10" fill="' + t.card + '" stroke="rgba(' + t.dangerRgb + ',0.25)" stroke-width="1" filter="url(#cs)"/><rect x="' + PAD + '" y="' + by + '" width="4" height="' + bh + '" rx="2" fill="' + t.danger + '" aria-hidden="true"/><text x="' + (PAD + 20) + '" y="' + (by + 28) + '" font-size="14" font-weight="700" fill="' + t.danger + '">' + esc(s.problemTitle) + '</text>';
+  for (var i = 0; i < pl.length; i++) svg += '<text x="' + (PAD + 20) + '" y="' + (by + 52 + i * 20) + '" font-size="13" fill="' + t.textSecondary + '">' + esc(pl[i]) + '</text>';
+  svg += '</g>';
+  var ax = PAD + bw + (aw - 20) / 2, ay = by + bh / 2;
+  svg += '<g aria-hidden="true"><line x1="' + ax + '" y1="' + ay + '" x2="' + (ax + 16) + '" y2="' + ay + '" stroke="' + t.accent + '" stroke-width="2"/><polygon points="' + (ax + 14) + ',' + (ay - 5) + ' ' + (ax + 22) + ',' + ay + ' ' + (ax + 14) + ',' + (ay + 5) + '" fill="' + t.accent + '"/></g>';
+  var sx = PAD + bw + aw;
+  svg += '<g><rect x="' + sx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10" fill="' + t.card + '" stroke="rgba(' + t.successRgb + ',0.25)" stroke-width="1" filter="url(#cs)"/><rect x="' + sx + '" y="' + by + '" width="4" height="' + bh + '" rx="2" fill="' + t.success + '" aria-hidden="true"/><text x="' + (sx + 20) + '" y="' + (by + 28) + '" font-size="14" font-weight="700" fill="' + t.success + '">' + esc(s.solutionTitle) + '</text>';
+  for (var i = 0; i < sl.length; i++) svg += '<text x="' + (sx + 20) + '" y="' + (by + 52 + i * 20) + '" font-size="13" fill="' + t.textSecondary + '">' + esc(sl[i]) + '</text>';
+  svg += '</g>';
+  return svg;
+}
+
+function rFeats(s, t, y, h, cols) {
+  var g = 12, cw = (CW - g * (cols - 1)) / cols, ch = 98;
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">' + esc(s.title.toUpperCase()) + '</text>';
+  for (var i = 0; i < s.items.length; i++) {
+    var it = s.items[i], col = i % cols, row = Math.floor(i / cols), x = PAD + col * (cw + g), cy = y + 34 + row * (ch + g);
+    svg += '<g><rect x="' + x + '" y="' + cy + '" width="' + cw + '" height="' + ch + '" rx="10" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1" filter="url(#cs)"/><circle cx="' + (x + 20) + '" cy="' + (cy + 20) + '" r="6" fill="rgba(' + t.accentRgb + ',0.15)" aria-hidden="true"/><circle cx="' + (x + 20) + '" cy="' + (cy + 20) + '" r="2.5" fill="' + t.accent + '" aria-hidden="true"/><text x="' + (x + 34) + '" y="' + (cy + 24) + '" font-size="13" font-weight="600" fill="' + t.textPrimary + '">' + esc(trunc(it.title, 38)) + '</text>';
+    if (it.description) { var dl = wrapT(it.description, 40, 12).slice(0, 3); for (var li = 0; li < dl.length; li++) svg += '<text x="' + (x + 20) + '" y="' + (cy + 46 + li * 17) + '" font-size="12" fill="' + t.textSecondary + '">' + esc(dl[li]) + '</text>' }
+    svg += '</g>';
+  }
+  return svg;
+}
+
+function rTech(s, t, y, h) {
+  var cols = 4, g = 10, bw = (CW - g * (cols - 1)) / cols, bh = 34;
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">' + esc(s.title.toUpperCase()) + '</text>';
+  for (var i = 0; i < s.items.length; i++) {
+    var tech = s.items[i], col = i % cols, row = Math.floor(i / cols), x = PAD + col * (bw + g), by = y + 34 + row * (bh + g);
+    svg += '<g><rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="8" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1"/><circle cx="' + (x + 16) + '" cy="' + (by + bh / 2) + '" r="4" fill="rgba(' + t.accentRgb + ',0.2)" aria-hidden="true"/><circle cx="' + (x + 16) + '" cy="' + (by + bh / 2) + '" r="1.8" fill="' + t.accent + '" aria-hidden="true"/><text x="' + (x + 28) + '" y="' + (by + bh / 2 + 4.5) + '" font-size="12.5" font-weight="500" fill="' + t.textPrimary + '">' + esc(tech) + '</text></g>';
+  }
+  return svg;
+}
+
+function rSteps(s, t, y, h) {
+  var sh = 58, g = 12, lx = PAD + 16;
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">' + esc(s.title.toUpperCase()) + '</text>';
+  if (s.items.length > 1) { var ls = y + 34 + sh / 2, le = y + 34 + (s.items.length - 1) * (sh + g) + sh / 2; svg += '<line x1="' + lx + '" y1="' + ls + '" x2="' + lx + '" y2="' + le + '" stroke="' + t.cardBorder + '" stroke-width="2" stroke-dasharray="4,4" aria-hidden="true"/>' }
+  for (var i = 0; i < s.items.length; i++) {
+    var it = s.items[i], sy = y + 34 + i * (sh + g), cx = PAD + 40;
+    svg += '<g><circle cx="' + lx + '" cy="' + (sy + sh / 2) + '" r="14" fill="' + t.card + '" stroke="' + t.accent + '" stroke-width="2"/><text x="' + lx + '" y="' + (sy + sh / 2 + 5) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + t.accent + '">' + it.step + '</text><rect x="' + cx + '" y="' + sy + '" width="' + (CW - 40) + '" height="' + sh + '" rx="10" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1" filter="url(#cs)"/><text x="' + (cx + 18) + '" y="' + (sy + 24) + '" font-size="13" font-weight="600" fill="' + t.textPrimary + '">' + esc(trunc(it.title, 60)) + '</text>';
+    if (it.description) { var dl = wrapT(it.description, 70, 12).slice(0, 2); for (var li = 0; li < dl.length; li++) svg += '<text x="' + (cx + 18) + '" y="' + (sy + 42 + li * 16) + '" font-size="12" fill="' + t.textSecondary + '">' + esc(dl[li]) + '</text>' }
+    svg += '</g>';
+  }
+  return svg;
+}
+
+function rCL(s, t, y, h) {
+  var g = 12, cw = (CW - g) / 2, ch = 78;
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">' + esc(s.title.toUpperCase()) + '</text>';
+  for (var i = 0; i < s.items.length; i++) {
+    var it = s.items[i], col = i % 2, row = Math.floor(i / 2), x = PAD + col * (cw + g), cy = y + 34 + row * (ch + g);
+    svg += '<g><rect x="' + x + '" y="' + cy + '" width="' + cw + '" height="' + ch + '" rx="10" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1" filter="url(#cs)"/><rect x="' + x + '" y="' + cy + '" width="3" height="' + ch + '" rx="1.5" fill="' + t.accent + '" opacity="0.5" aria-hidden="true"/><text x="' + (x + 16) + '" y="' + (cy + 28) + '" font-size="13" font-weight="600" fill="' + t.textPrimary + '">' + esc(trunc(it.title, 40)) + '</text>';
+    if (it.description) { var dl = wrapT(it.description, 48, 12).slice(0, 2); for (var li = 0; li < dl.length; li++) svg += '<text x="' + (x + 16) + '" y="' + (cy + 48 + li * 16) + '" font-size="12" fill="' + t.textSecondary + '">' + esc(dl[li]) + '</text>' }
+    svg += '</g>';
+  }
+  return svg;
+}
+
+function rCB(s, t, y, h) {
+  var lines = wrapT(s.text || '', 75, 14);
+  var svg = '<text x="' + PAD + '" y="' + (y + 16) + '" font-size="11" font-weight="600" fill="' + t.sectionLabel + '" letter-spacing="2.5">' + esc(s.title.toUpperCase()) + '</text><rect x="' + PAD + '" y="' + (y + 30) + '" width="' + CW + '" height="' + (h - 30) + '" rx="10" fill="' + t.card + '" stroke="' + t.cardBorder + '" stroke-width="1" filter="url(#cs)"/>';
+  for (var i = 0; i < lines.length; i++) svg += '<text x="' + (PAD + 20) + '" y="' + (y + 56 + i * 22) + '" font-size="14" fill="' + t.textSecondary + '">' + esc(lines[i]) + '</text>';
+  return svg;
+}
+
+function rFoot(t, y, h) { return '<rect x="0" y="' + y + '" width="' + W + '" height="' + h + '" fill="' + t.footerBg + '" aria-hidden="true"/><text x="' + (W / 2) + '" y="' + (y + h / 2 + 4) + '" text-anchor="middle" font-size="11" fill="' + t.sectionLabel + '">Generated with Infographic Studio</text>' }
+
+// ============================================================
+// DOM & EVENT WIRING
+// ============================================================
+var $input = $('source-input'), $charCt = $('char-ct'), $genBtn = $('gen-btn');
+var $empty = $('empty-state'), $ic = $('infographic-container'), $iw = $('infographic-wrapper');
+var $lo = $('loading-overlay'), $ldText = $('ld-text'), $chips = $('sec-chips');
+var $ghUrl = $('gh-url'), $ghFetch = $('gh-fetch-btn');
+var $modeBadge = $('mode-badge'), $tmplSel = $('tmpl-sel');
+
+$input.addEventListener('input', function() {
+  var l = $input.value.length;
+  $charCt.textContent = l.toLocaleString() + ' / 38,000';
+  $charCt.className = 'char-ct' + (l > MAX_CHARS ? ' danger' : l > MAX_CHARS * 0.85 ? ' warn' : '');
+  $genBtn.disabled = l < 20;
+});
+
+$input.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); if (!$genBtn.disabled) generate() }
+  if (e.key === 'Tab') { e.preventDefault(); var s = $input.selectionStart, en = $input.selectionEnd; $input.value = $input.value.substring(0, s) + '  ' + $input.value.substring(en); $input.selectionStart = $input.selectionEnd = s + 2; $input.dispatchEvent(new Event('input')) }
+});
+
+$input.addEventListener('dragover', function(e) { e.preventDefault(); $input.style.borderColor = 'var(--accent)' });
+$input.addEventListener('dragleave', function() { $input.style.borderColor = '' });
+$input.addEventListener('drop', function(e) {
+  e.preventDefault(); $input.style.borderColor = '';
+  var f = e.dataTransfer.files[0];
+  if (f && (f.type === 'text/plain' || f.type === 'text/markdown' || f.name.endsWith('.md') || f.name.endsWith('.txt'))) {
+    var r = new FileReader(); r.onload = function(ev) { $input.value = ev.target.result; $input.dispatchEvent(new Event('input')); toast('Loaded ' + f.name) }; r.readAsText(f);
+  } else toast('Drop a .md or .txt file', 'error');
+});
+
+$ghFetch.addEventListener('click', function() {
+  var url = $ghUrl.value.trim(); if (!url) return toast('Enter a repo URL', 'error');
+  $ghFetch.disabled = true; $ghFetch.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching';
+  fetchGitHub(url).then(function(d) {
+    S.ghMeta = d.metadata; showGitHubMeta(d.metadata);
+    if (d.readme) { $input.value = d.readme; $input.dispatchEvent(new Event('input')) }
+    else if (d.metadata.description) { $input.value = '# ' + d.metadata.name + '\n\n' + d.metadata.description; $input.dispatchEvent(new Event('input')) }
+    toast('Fetched ' + d.metadata.name);
+  }).catch(function(err) { toast(err.message, 'error'); showGitHubMeta(null) }).finally(function() { $ghFetch.disabled = false; $ghFetch.innerHTML = '<i class="fas fa-download"></i> Fetch' });
+});
+
+$ghUrl.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); $ghFetch.click() } });
+$('load-sample-btn').addEventListener('click', function() { $input.value = SAMPLES[$tmplSel.value] || ''; $input.dispatchEvent(new Event('input')); toast('Sample loaded') });
+$tmplSel.addEventListener('change', function() { $input.value = $tmplSel.value === 'empty' ? '' : (SAMPLES[$tmplSel.value] || ''); $input.dispatchEvent(new Event('input')) });
+
+// ============================================================
+// GENERATE
+// ============================================================
+$genBtn.addEventListener('click', generate);
+
+function generate() {
+  var text = $input.value.trim(); if (text.length < 20) return;
+  text = smartTrunc(text, MAX_CHARS);
+  $lo.classList.add('active'); $genBtn.disabled = true;
+  var provider = store.get('provider', 'none');
+  var hasKey = provider === 'groq' ? !!store.get('groq_key', '') : provider === 'openrouter' ? !!store.get('or_key', '') : false;
+
+  if (hasKey) {
+    $ldText.textContent = 'Analyzing with AI (' + provider + ')...';
+    analyzeWithAI(text, S.ghMeta).then(function(ai) {
+      if (!ai) throw new Error('No AI response');
+      var spec = mergeGHMeta(ai.spec, S.ghMeta);
+      S.spec = spec; S.analysisMode = 'ai'; S.analysisModel = ai.model;
+      renderToDOM(); $empty.style.display = 'none'; $ic.classList.add('active');
+      buildChips(); updateModeBadge(); toast('Infographic generated (AI)');
+    }).catch(function(err) {
+      console.error(err);
+      $ldText.textContent = 'Falling back to rule-based...';
+      setTimeout(function() { doRuleBasedGenerate(text) }, 250);
+    });
+  } else {
+    $ldText.textContent = 'Analyzing with rule-based engine...';
+    setTimeout(function() { doRuleBasedGenerate(text) }, 250);
+  }
+}
+
+function doRuleBasedGenerate(text) {
+  try {
+    S.parsedDoc = parseMD(text); S.variants = {};
+    var spec = buildRuleSpec(S.parsedDoc, S.variants);
+    spec = mergeGHMeta(spec, S.ghMeta);
+    S.spec = spec; S.analysisMode = 'rule'; S.analysisModel = '';
+    renderToDOM(); $empty.style.display = 'none'; $ic.classList.add('active');
+    buildChips(); updateModeBadge(); toast('Infographic generated');
+  } catch(e) { toast('Generation failed: ' + e.message, 'error') }
+  finally { $lo.classList.remove('active'); $genBtn.disabled = $input.value.trim().length < 20 }
+}
+
+function renderToDOM() { if (!S.spec) return; $iw.innerHTML = renderSVG(S.spec, S.theme) }
+
+function updateModeBadge() {
+  if (S.analysisMode === 'ai') { $modeBadge.className = 'mode-badge ai'; $modeBadge.textContent = 'AI · ' + S.analysisModel.split('/').pop().replace(/:free$/, '') }
+  else { $modeBadge.className = 'mode-badge rule'; $modeBadge.textContent = 'Rule-based' }
+}
+
+// ============================================================
+// SECTION CHIPS
+// ============================================================
+var SLBL = { 'problem-solution': 'Problem → Solution', stats: 'Metrics', features: 'Features', 'tech-stack': 'Tech Stack', steps: 'Steps', 'content-list': 'Details', 'content-block': 'Overview', about: 'About' };
+
+function buildChips() {
+  if (!S.spec) return; $chips.innerHTML = '';
+  S.spec.sections.forEach(function(sec) {
+    var c = document.createElement('button'); c.className = 'sec-chip';
+    c.innerHTML = (SLBL[sec.id] || sec.id) + ' <i class="fas fa-rotate ri"></i>';
+    c.addEventListener('click', function() { regenSection(sec.id) });
+    c.setAttribute('aria-label', 'Regenerate ' + (SLBL[sec.id] || sec.id));
+    $chips.appendChild(c);
+  });
+}
+
+function regenSection(id) {
+  if (S.analysisMode === 'rule' && S.parsedDoc) {
+    S.variants[id] = ((S.variants[id] || 0) + 1);
+    S.spec = buildRuleSpec(S.parsedDoc, S.variants); S.spec = mergeGHMeta(S.spec, S.ghMeta);
+    renderToDOM(); buildChips(); toast((SLBL[id] || id) + ' regenerated');
+  } else if (S.analysisMode === 'ai') { toast('Re-running AI analysis...'); generate() }
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function buildThemeMenu() {
+  var m = $('theme-menu'); m.innerHTML = '';
+  var hasCustom = !!store.get('custom_theme', null);
+  for (var k in THEMES) {
+    (function(key) {
+      var t = THEMES[key];
+      var b = document.createElement('button'); b.className = 'tm-opt' + (key === S.theme ? ' active-theme' : '');
+      b.innerHTML = '<span class="tm-sw" style="background:' + t.swatch + ';border-color:' + t.cardBorder + '"></span> ' + t.name;
+      b.addEventListener('click', function() { S.theme = key; renderToDOM(); buildThemeMenu(); $('theme-menu').classList.remove('open') });
+      m.appendChild(b);
+    })(k);
+  }
+  if (hasCustom) {
+    var ct = getCustomTheme();
+    var b = document.createElement('button'); b.className = 'tm-opt' + (S.theme === 'custom' ? ' active-theme' : '');
+    b.innerHTML = '<span class="tm-sw" style="background:' + ct.swatch + ';border-color:' + ct.cardBorder + '"></span> <i class="fas fa-sliders" style="font-size:10px;color:var(--accent);margin-right:2px"></i> Custom';
+    b.addEventListener('click', function() { S.theme = 'custom'; renderToDOM(); buildThemeMenu(); $('theme-menu').classList.remove('open') });
+    m.appendChild(b);
+  }
+}
+buildThemeMenu();
+$('theme-btn').addEventListener('click', function(e) { e.stopPropagation(); $('theme-menu').classList.toggle('open') });
+document.addEventListener('click', function() { $('theme-menu').classList.remove('open') });
+
+// ============================================================
+// EXPORT
+// ============================================================
+$('export-svg-btn').addEventListener('click', function() {
+  var svg = $iw.querySelector('svg'); if (!svg) return;
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' })); a.download = slug(S.spec ? S.spec.title : '') + '.svg'; document.body.appendChild(a); a.click(); document.body.removeChild(a); toast('SVG exported');
+});
+$('export-png-btn').addEventListener('click', function() {
+  var svg = $iw.querySelector('svg'); if (!svg) return;
+  var url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' }));
+  var img = new Image(); img.onload = function() {
+    var c = document.createElement('canvas'); c.width = img.width * 2; c.height = img.height * 2;
+    var ctx = c.getContext('2d'); ctx.scale(2, 2); ctx.drawImage(img, 0, 0);
+    c.toBlob(function(b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = slug(S.spec ? S.spec.title : '') + '.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); toast('PNG exported (2x)') }, 'image/png');
+  }; img.src = url;
+});
+
+// ============================================================
+// FULLSCREEN
+// ============================================================
+$('fs-btn').addEventListener('click', function() {
+  S.fs = !S.fs; document.body.classList.toggle('fs-mode', S.fs);
+  $('fs-btn').innerHTML = S.fs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+  if (S.fs && document.fullscreenEnabled) document.documentElement.requestFullscreen().catch(function() {});
+  else if (!S.fs && document.fullscreenElement) document.exitFullscreen().catch(function() {});
+});
+document.addEventListener('fullscreenchange', function() { if (!document.fullscreenElement && S.fs) { S.fs = false; document.body.classList.remove('fs-mode'); $('fs-btn').innerHTML = '<i class="fas fa-expand"></i>' } });
+
+// ============================================================
+// SETTINGS
+// ============================================================
+var settingsModal = $('settings-modal');
+$('settings-btn').addEventListener('click', openSettings);
+$('settings-close').addEventListener('click', function() { settingsModal.classList.remove('active') });
+settingsModal.addEventListener('click', function(e) { if (e.target === settingsModal) settingsModal.classList.remove('active') });
+
+document.querySelectorAll('.modal-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.modal-tab').forEach(function(t) { t.classList.remove('active') });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active') });
+    tab.classList.add('active'); $('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'customize') buildCustomizeUI();
+  });
+});
+
+function openSettings() {
+  $('set-provider').value = store.get('provider', 'none');
+  $('set-groq-key').value = store.get('groq_key', '');
+  $('set-or-key').value = store.get('or_key', '');
+  $('set-gh-token').value = store.get('gh_token', '');
+  ['groq-status', 'or-status', 'gh-status'].forEach(function(id) { $(id).className = 'sdot' });
+  ['groq-test', 'or-test', 'gh-test'].forEach(function(id) { var b = $(id); b.className = 'tbtn'; b.textContent = 'Test' });
+  if (modelCache.groq && Date.now() - modelCache.groqTime < CACHE_TTL) populateModelDropdown($('set-groq-model'), modelCache.groq, store.get('groq_model', ''));
+  else $('set-groq-model').innerHTML = '<option value="">Connect to load models</option>';
+  if (modelCache.or && Date.now() - modelCache.orTime < CACHE_TTL) populateModelDropdown($('set-or-model'), modelCache.or, store.get('or_model', ''));
+  else $('set-or-model').innerHTML = '<option value="">Connect to load models</option>';
+  settingsModal.classList.add('active');
+}
+
+$('settings-save').addEventListener('click', function() {
+  store.set('provider', $('set-provider').value);
+  store.set('groq_key', $('set-groq-key').value.trim());
+  store.set('groq_model', $('set-groq-model').value);
+  store.set('or_key', $('set-or-key').value.trim());
+  store.set('or_model', $('set-or-model').value);
+  store.set('gh_token', $('set-gh-token').value.trim());
+  saveCustomThemeFromUI();
+  settingsModal.classList.remove('active'); updateConnStatus(); toast('Settings saved');
+});
+
+$('settings-clear').addEventListener('click', function() {
+  ['provider', 'groq_key', 'groq_model', 'or_key', 'or_model', 'gh_token', 'custom_theme'].forEach(function(k) { store.clear(k) });
+  $('set-provider').value = 'none'; $('set-groq-key').value = ''; $('set-or-key').value = ''; $('set-gh-token').value = '';
+  ['groq-status', 'or-status', 'gh-status'].forEach(function(id) { $(id).className = 'sdot' });
+  ['groq-test', 'or-test', 'gh-test'].forEach(function(id) { var b = $(id); b.className = 'tbtn'; b.textContent = 'Test' });
+  $('set-groq-model').innerHTML = '<option value="">Connect to load models</option>';
+  $('set-or-model').innerHTML = '<option value="">Connect to load models</option>';
+  modelCache = { groq: null, or: null, groqTime: 0, orTime: 0 };
+  updateConnStatus(); toast('All keys cleared');
+});
+
+// Test buttons
+$('groq-test').addEventListener('click', function() {
+  var btn = $('groq-test'), dot = $('groq-status'), key = $('set-groq-key').value.trim();
+  if (!key) return toast('Enter a Groq API key', 'error');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'sdot';
+  fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key }, body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: 'ok' }], max_tokens: 5 }) }).then(function(r) {
+    if (r.ok) { dot.className = 'sdot ok'; btn.className = 'tbtn ok'; btn.textContent = 'Connected'; refreshGroqModels() }
+    else { r.json().catch(function() { return {} }).then(function(e) { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Failed'; toast('Groq: ' + ((e.error && e.error.message) || r.status), 'error') }) }
+  }).catch(function(e) { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Error'; toast('Groq: ' + e.message, 'error') }).finally(function() { btn.disabled = false });
+});
+
+$('or-test').addEventListener('click', function() {
+  var btn = $('or-test'), dot = $('or-status'), key = $('set-or-key').value.trim();
+  if (!key) return toast('Enter an OpenRouter API key', 'error');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'sdot';
+  fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key, 'HTTP-Referer': window.location.origin }, body: JSON.stringify({ model: 'meta-llama/llama-3.3-70b-instruct:free', messages: [{ role: 'user', content: 'ok' }], max_tokens: 5 }) }).then(function(r) {
+    if (r.ok) { dot.className = 'sdot ok'; btn.className = 'tbtn ok'; btn.textContent = 'Connected'; refreshORModels() }
+    else { r.json().catch(function() { return {} }).then(function(e) { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Failed'; toast('OpenRouter: ' + ((e.error && e.error.message) || r.status), 'error') }) }
+  }).catch(function(e) { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Error'; toast('OpenRouter: ' + e.message, 'error') }).finally(function() { btn.disabled = false });
+});
+
+$('gh-test').addEventListener('click', function() {
+  var btn = $('gh-test'), dot = $('gh-status'), token = $('set-gh-token').value.trim();
+  if (!token) return toast('Enter a GitHub token', 'error');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'sdot';
+  fetch('https://api.github.com/user', { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }).then(function(r) {
+    if (r.ok) { r.json().then(function(d) { dot.className = 'sdot ok'; btn.className = 'tbtn ok'; btn.textContent = '@' + d.login }) }
+    else { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Failed'; toast('GitHub: ' + r.statusText, 'error') }
+  }).catch(function(e) { dot.className = 'sdot fail'; btn.className = 'tbtn fail'; btn.textContent = 'Error'; toast('GitHub: ' + e.message, 'error') }).finally(function() { btn.disabled = false });
+});
+
+$('groq-refresh').addEventListener('click', function() { var icon = $('groq-refresh').querySelector('i'); icon.classList.add('fa-spin'); refreshGroqModels().finally(function() { icon.classList.remove('fa-spin') }) });
+$('or-refresh').addEventListener('click', function() { var icon = $('or-refresh').querySelector('i'); icon.classList.add('fa-spin'); refreshORModels().finally(function() { icon.classList.remove('fa-spin') }) });
+
+window.toggleVis = function(id) { var el = $(id); el.type = el.type === 'password' ? 'text' : 'password' };
+
+function updateConnStatus() {
+  var btn = $('settings-btn'), p = store.get('provider', 'none');
+  var hasKey = p === 'groq' ? !!store.get('groq_key', '') : p === 'openrouter' ? !!store.get('or_key', '') : false;
+  btn.classList.toggle('connected', hasKey || !!store.get('gh_token', ''));
+}
+updateConnStatus();
+
+// ============================================================
+// CUSTOMIZE TAB
+// ============================================================
+var COLOR_FIELDS = [
+  { key: 'bg', label: 'Background' }, { key: 'card', label: 'Card' }, { key: 'cardBorder', label: 'Card Border' },
+  { key: 'textPrimary', label: 'Primary Text' }, { key: 'textSecondary', label: 'Secondary Text' },
+  { key: 'accent', label: 'Accent' }, { key: 'sectionLabel', label: 'Section Label' }, { key: 'footerBg', label: 'Footer BG' }
+];
+
+function buildCustomizeUI() {
+  var ct = $('customize-content');
+  var custom = store.get('custom_theme', null) || {};
+  var html = '<div class="fg"><div class="fl"><span>Copy colors from</span></div><select class="fi-sel" id="cust-base-theme" style="max-width:200px"><option value="">Start blank</option>';
+  for (var k in THEMES) html += '<option value="' + k + '">' + THEMES[k].name + '</option>';
+  html += '</select><div class="fh">Select a built-in theme to start from, then adjust below.</div></div>';
+  html += '<div class="fg"><div class="fl"><span>Font Family</span></div><select class="fi-sel" id="cust-font">';
+  FONT_OPTIONS.forEach(function(f) { html += '<option value="' + f.value + '"' + (custom.font === f.value ? ' selected' : '') + '>' + f.label + '</option>' });
+  html += '</select></div><hr class="divider"><div style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--fg)">Colors</div>';
+  COLOR_FIELDS.forEach(function(f) {
+    var val = custom[f.key] || '#000000';
+    html += '<div class="color-row"><label>' + f.label + '</label><input type="color" id="cust-color-' + f.key + '" value="' + (val.charAt(0) === '#' ? val : '#000000') + '"><input type="text" class="hex-val" id="cust-hex-' + f.key + '" value="' + val + '" maxlength="7" spellcheck="false"></div>';
+  });
+  html += '<hr class="divider"><div style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--fg)">Semantic Colors</div>';
+  ['success', 'danger'].forEach(function(f) {
+    var val = custom[f] || (f === 'success' ? '#10B981' : '#EF4444');
+    html += '<div class="color-row"><label>' + f.charAt(0).toUpperCase() + f.slice(1) + '</label><input type="color" id="cust-color-' + f + '" value="' + (val.charAt(0) === '#' ? val : '#000000') + '"><input type="text" class="hex-val" id="cust-hex-' + f + '" value="' + val + '" maxlength="7" spellcheck="false"></div>';
+  });
+  html += '<div class="theme-preview" id="theme-preview"></div>';
+  ct.innerHTML = html;
+
+  $('cust-base-theme').addEventListener('change', function() {
+    if (!this.value) return;
+    var t = THEMES[this.value]; if (!t) return;
+    COLOR_FIELDS.forEach(function(f) { if (t[f.key]) { $('cust-color-' + f.key).value = t[f.key]; $('cust-hex-' + f.key).value = t[f.key] } });
+    $('cust-color-success').value = t.success; $('cust-hex-success').value = t.success;
+    $('cust-color-danger').value = t.danger; $('cust-hex-danger').value = t.danger;
+    updatePreview();
+  });
+
+  var allKeys = COLOR_FIELDS.map(function(f) { return f.key }).concat(['success', 'danger']);
+  allKeys.forEach(function(key) {
+    var picker = $('cust-color-' + key), hex = $('cust-hex-' + key);
+    if (!picker || !hex) return;
+    picker.addEventListener('input', function() { hex.value = picker.value; updatePreview() });
+    hex.addEventListener('input', function() { if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) { picker.value = hex.value; updatePreview() } });
+  });
+  var fontSel = $('cust-font');
+  if (fontSel) fontSel.addEventListener('change', updatePreview);
+  updatePreview();
+}
+
+function updatePreview() {
+  var prev = $('theme-preview'); if (!prev) return;
+  var bg = ($('cust-hex-bg') || {}).value || '#0F1117';
+  var card = ($('cust-hex-card') || {}).value || '#1A1D27';
+  var border = ($('cust-hex-cardBorder') || {}).value || '#2A2D38';
+  var primary = ($('cust-hex-textPrimary') || {}).value || '#F1F3F5';
+  var secondary = ($('cust-hex-textSecondary') || {}).value || '#8B919A';
+  var accent = ($('cust-hex-accent') || {}).value || '#F59E0B';
+  var label = ($('cust-hex-sectionLabel') || {}).value || '#6B7280';
+  var font = ($('cust-font') || {}).value || FONT_OPTIONS[0].value;
+  prev.innerHTML = '<div class="theme-preview-row"><div class="theme-preview-swatch" style="background:' + bg + '"></div><span style="font-size:10px;color:var(--muted)">BG</span><div class="theme-preview-swatch" style="background:' + card + ';border-color:' + border + '"></div><span style="font-size:10px;color:var(--muted)">Card</span><div class="theme-preview-swatch" style="background:' + accent + '"></div><span style="font-size:10px;color:var(--muted)">Accent</span></div><div style="background:' + card + ';border:1px solid ' + border + ';border-radius:8px;padding:12px;margin-bottom:8px"><div style="font-family:' + font + ';color:' + primary + ';font-weight:700;font-size:16px">Title Preview</div><div style="font-family:' + font + ';color:' + secondary + ';font-size:12px;margin-top:4px">Secondary text description here</div></div><div style="display:flex;gap:8px"><div style="background:' + card + ';border:1px solid ' + border + ';border-radius:6px;padding:8px 12px;flex:1"><div style="font-size:18px;font-weight:800;color:' + accent + ';font-family:' + font + '">99.9%</div><div style="font-size:10px;color:' + label + ';font-family:' + font + '">METRIC</div></div><div style="background:' + card + ';border:1px solid ' + border + ';border-radius:6px;padding:8px 12px;flex:1"><div style="font-size:18px;font-weight:800;color:' + accent + ';font-family:' + font + '">10k</div><div style="font-size:10px;color:' + label + ';font-family:' + font + '">USERS</div></div></div>';
+}
+
+function saveCustomThemeFromUI() {
+  var data = { font: ($('cust-font') || {}).value || FONT_OPTIONS[0].value };
+  var allKeys = COLOR_FIELDS.map(function(f) { return f.key }).concat(['success', 'danger']);
+  var hasAny = false;
+  allKeys.forEach(function(key) {
+    var el = $('cust-hex-' + key); if (!el) return;
+    var val = (el.value || '').trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) { data[key] = val; hasAny = true }
+  });
+  if (hasAny) { store.set('custom_theme', data); S.theme = 'custom'; buildThemeMenu() }
+}
+
+// ============================================================
+// HELP
+// ============================================================
+$('help-btn').addEventListener('click', function() {
+  var o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)';
+  o.addEventListener('click', function(e) { if (e.target === o) o.remove() });
+  var m = document.createElement('div'); m.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;padding:28px';
+  m.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h2 style="font-size:18px;font-weight:700">How to Use</h2><button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px" aria-label="Close"><i class="fas fa-times"></i></button></div><div style="font-size:13px;line-height:1.8;color:var(--muted)"><p style="color:var(--fg);font-weight:500;margin-bottom:12px">Turn GitHub repos and source material into shareable infographics.</p><h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">GitHub</h3><p>Enter <code style="color:var(--fg);background:var(--card);padding:1px 5px;border-radius:3px">owner/repo</code> and click Fetch. Small repos (&lt;10 stars/forks) won\'t show those metrics.</p><h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">AI vs Rule-Based</h3><p>Configure Groq or OpenRouter in Settings. Model lists are fetched live from their APIs. Without AI, rule-based engine uses quality thresholds — sections only appear with enough content.</p><h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">Custom Themes</h3><p>Settings → Customize: pick a base theme, override colors and font. Live preview included.</p><h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">Privacy</h3><p>All client-side. Keys in localStorage only. No intermediary, no tracking.</p></div>';
+  o.appendChild(m); document.body.appendChild(o);
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type) {
+  var c = $('toast-container'), t = document.createElement('div');
+  t.className = 'toast' + (type === 'error' ? ' error' : '');
+  t.innerHTML = '<i class="fas fa-' + (type === 'error' ? 'exclamation-circle' : 'check-circle') + '"></i> ' + esc(msg);
+  c.appendChild(t); setTimeout(function() { t.classList.add('out'); setTimeout(function() { t.remove() }, 250) }, 2800);
+}
+
+setTimeout(function() { $input.focus() }, 100);
+</script>
+</body>
+</html>
