@@ -320,39 +320,11 @@
 
 <script>
 // ============================================================
-// CONFIGURATION & HELPERS
+// CONFIGURATION
 // ============================================================
 const MAX_CHARS = 38000;
-const W = 800, PAD = 60, CW = W - PAD * 2;
+const W = 800, PAD = 60, CW = W - PAD * 2, SGAP = 40;
 const FF = "'Space Grotesk',system-ui,sans-serif";
-
-// Helper: Format numbers with K/M suffix
-function fmtNum(n) {
-  if (!n && n !== 0) return '0';
-  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
-  if (n >= 1000) return (n/1000).toFixed(1)+'K';
-  return n.toString();
-}
-
-// Helper: Check if value is meaningful
-function isMeaningful(val, minThreshold = 0) {
-  if (!val && val !== 0) return false;
-  if (typeof val === 'string') return val.trim().length > minThreshold;
-  if (typeof val === 'number') return val > minThreshold;
-  return true;
-}
-
-// Helper: Smart truncation with ellipsis
-function smartTrunc(text, maxLen, wordBoundary = true) {
-  if (!text || text.length <= maxLen) return text || '';
-  if (!wordBoundary) return text.slice(0, maxLen) + '...';
-  let truncated = text.slice(0, maxLen);
-  const lastSpace = truncated.lastIndexOf(' ');
-  if (lastSpace > maxLen * 0.6) {
-    truncated = truncated.slice(0, lastSpace);
-  }
-  return truncated + '...';
-}
 
 const THEMES = {
   midnight:{name:'Midnight',swatch:'#0F1117',bg:'#0F1117',card:'#1A1D27',cardBorder:'#2A2D38',textPrimary:'#F1F3F5',textSecondary:'#8B919A',accent:'#F59E0B',accentRgb:'245,158,11',success:'#10B981',successRgb:'16,185,129',danger:'#EF4444',dangerRgb:'239,68,68',sectionLabel:'#6B7280',dotGrid:'rgba(255,255,255,0.025)',footerBg:'#0A0C10',glowColor:'rgba(245,158,11,0.08)'},
@@ -363,699 +335,555 @@ const THEMES = {
 
 const TECH_KW=['React','Vue','Angular','Svelte','Next.js','Nuxt','Gatsby','Astro','Node.js','Deno','Bun','Express','Fastify','Koa','Hono','NestJS','TypeScript','JavaScript','Python','Go','Rust','Java','Kotlin','Swift','C++','C#','Ruby','PHP','Elixir','Haskell','Zig','PostgreSQL','MySQL','MongoDB','Redis','SQLite','CockroachDB','DynamoDB','Supabase','PlanetScale','Docker','Kubernetes','Terraform','Pulumi','Ansible','Helm','AWS','GCP','Azure','Vercel','Netlify','Cloudflare','Railway','Fly.io','Render','Heroku','GraphQL','REST','gRPC','WebSocket','tRPC','Tailwind CSS','Sass','Webpack','Vite','esbuild','Turbopack','Jest','Vitest','Playwright','Cypress','Prisma','Drizzle','TypeORM','Sequelize','Mongoose','Redux','Zustand','Jotai','Three.js','D3.js','Linux','Nginx','Elasticsearch','Kafka','RabbitMQ','Git','GitHub','GitLab','OAuth','JWT','Stripe','Sentry','Datadog','Grafana','Figma','Storybook','Wasm','Tauri','Electron','React Native','Flutter','LangChain','OpenAI','Anthropic','htmx','Alpine.js','Laravel','Django','Flask','FastAPI','Spring Boot'];
 
-const SEC_PATTERNS={problem:/\b(problem|pain\s*point|challenge|why\s+(we|this)|motivation|gap|frustrat|struggle)\b/i,solution:/\b(solution|approach|how\s+(we|it)\s+work|what\s+we\s+built|our\s+approach|resolution)\b/i,features:/\b(feature|capability|highlight|what\s+(it|you)\s+(does|can)|key\s+(capabilit|feature)|functionality)\b/i,'tech-stack':/\b(tech\s*stack|built\s*with|dependencies|powered\s*by|technolog|under\s*the\s*hood|stack)\b/i,'getting-started':/\b(install|setup|quick\s*start|getting\s*started|prerequisite)\b/i,architecture:/\b(architecture|design|structure|component\s+overview|system\s+design)\b/i,api:/\b(api|endpoint|route|request|response|http)\b/i,usage:/\b(usage|example|how\s+to\s+use|basic)\b/i,contributing:/\b(contribut|develop)\b/i,roadmap:/\b(roadmap|plan|future|next\s*step|coming)\b/i,metrics:/\b(benchmark|performance|metric|stat|by\s+the\s+number|result)\b/i};
+const SEC_PATTERNS={problem:/\b(problem|pain\s*point|challenge|why\s+(we|this)|motivation|gap|frustrat|struggle)\b/i,solution:/\b(solution|approach|how\s+(we|it)\s+work|what\s+we\s+built|our\s+approach|resolution)\b/i,features:/\b(feature|capability|highlight|what\s+(it|you)\s+(does|can)|key\s+(capabilit|feature)|functionality)\b/i,'tech-stack':/\b(tech\s*stack|built\s*with|dependencies|powered\s*by|technolog|under\s*the\s*hood|stack)\b/i,'getting-started':/\b(install|setup|quick\s*start|getting\s*started|prerequisite)\b/i,architecture:/\b(architecture|design|structure|component\s+overview|system\s+design)\b/i,api:/\b(api|endpoint|route|request|response|http)\b/i,usage:/\b(usage|example|how\s+to\s+use|basic)\b/i,contributing:/\b(contribut|develop)\b/i,roadmap:/\b(roadmap|plan|future|next\s+step|coming)\b/i,metrics:/\b(benchmark|performance|metric|stat|by\s+the\s+number|result)\b/i};
 
-const SAMPLES={readme:`# CloudScale\n\nThe modern infrastructure platform that lets teams deploy, scale, and monitor cloud applications in minutes, not days.\n\n## The Problem\nManaging cloud infrastructure is fragmented. Teams spend 40% of their time on operational overhead.\n\n## Our Solution\nCloudScale unifies infrastructure management into a single declarative configuration.\n\n## Key Features\n- **Zero-config scaling** — Automatically adjusts resources\n- **Multi-cloud abstraction** — Write once, deploy anywhere\n- **Drift detection** — Catches configuration changes in 30s\n- **Cost optimization** — Reduces cloud spend by 35%\n\n## Tech Stack\nGo, TypeScript, Terraform, PostgreSQL, Redis, Kubernetes\n\n## By the Numbers\n- 99.99% uptime SLA\n- 10,000+ deployments per day\n- 500+ enterprise customers`,api:`# API Gateway Service\n\nA high-performance API gateway built for microservices.\n\n## Features\n- Rate limiting\n- JWT Authentication\n- Request logging\n- Circuit breaking\n\n## Tech Stack\nNode.js, Express, Redis, Docker`,proposal:`# Project Phoenix\n\nModernizing our legacy monolith into event-driven microservices.\n\n## Problem\nCurrent system suffers from 2s latency and frequent downtime.\n\n## Solution\nMigrate to Go-based microservices with Kafka event streaming.\n\n## Roadmap\n1. Q1: Core migration\n2. Q2: Event streaming\n3. Q3: Legacy decommission`,empty:''};
+const SAMPLES={readme:`# CloudScale\n\nThe modern infrastructure platform that lets teams deploy, scale, and monitor cloud applications in minutes, not days. Eliminate configuration drift and reduce operational overhead with a single declarative config.\n\n## The Problem\n\nManaging cloud infrastructure is fragmented across dozens of tools. Teams spend 40% of their time on operational overhead instead of building products. Configuration drift, inconsistent environments, and manual scaling lead to 3x more incidents than necessary.\n\n## Our Solution\n\nCloudScale unifies infrastructure management into a single declarative configuration. Define your desired state once, and our engine handles provisioning, scaling, healing, and observability across all major cloud providers.\n\n## Key Features\n\n- **Zero-config scaling** — Automatically adjusts resources based on real-time demand patterns\n- **Multi-cloud abstraction** — Write once, deploy to AWS, GCP, and Azure without changes\n- **Drift detection** — Catches and auto-remediates configuration changes within 30 seconds\n- **Cost optimization** — Reduces cloud spend by 35% on average through intelligent right-sizing\n- **GitOps workflow** — All changes through pull requests with full audit trail\n- **Built-in observability** — Metrics, logs, and traces out of the box\n\n## Tech Stack\n\n- Go (core control plane engine)\n- TypeScript (CLI and web dashboard)\n- Terraform (provider abstraction layer)\n- PostgreSQL (state management)\n- Redis (caching and real-time events)\n- Kubernetes (data plane orchestration)\n\n## Quick Start\n\n1. Install the CLI with \`npm install -g @cloudscale/cli\`\n2. Authenticate with \`cloudscale auth login\`\n3. Initialize your project with \`cloudscale init\`\n4. Deploy with \`cloudscale apply --env production\`\n\n## By the Numbers\n\n- 99.99% uptime SLA guaranteed\n- 10,000+ deployments per day\n- 500+ enterprise customers\n- 35% average cost reduction\n- 12ms median API latency\n\n## Architecture\n\nCloudScale uses a control plane / data plane split. The control plane runs in our managed environment and handles state management, policy enforcement, and API routing. Data plane agents run in your cloud accounts and execute infrastructure changes.\n\n## Roadmap\n\n- **Q1 2025**: Windows and ARM support\n- **Q2 2025**: Custom provider SDK\n- **Q3 2025**: AI-powered cost recommendations\n- **Q4 2025**: Edge deployment support`,api:`# PaymentGateway API\n\nA unified payment processing API that abstracts across Stripe, PayPal, and Adyen. One integration, every payment method, full PCI compliance handled for you.\n\n## The Problem\n\nIntegrating multiple payment providers means maintaining separate SDKs, handling different webhook formats, and reconciling discrepancies between provider dashboards.\n\n## Our Solution\n\nPaymentGateway provides a single RESTful API that normalizes requests and responses across providers. Switch providers with a config change, not a code change.\n\n## Endpoints\n\n- **POST /v1/charges** — Create a new charge with automatic provider routing\n- **GET /v1/charges/:id** — Retrieve charge status\n- **POST /v1/refunds** — Issue refunds with partial amount support\n- **GET /v1/balance** — Aggregate balance across accounts\n- **POST /v1/webhooks/verify** — Verify and normalize webhooks\n\n## Key Features\n\n- **Provider abstraction** — Switch between Stripe, PayPal, Adyen with zero code changes\n- **Automatic failover** — Routes to backup provider if primary is down\n- **Webhook normalization** — All providers map to a single schema\n- **Idempotency keys** — Built-in deduplication prevents double-charging\n- **Real-time metrics** — Latency, success rate, and volume per provider\n\n## Tech Stack\n\n- Node.js with Fastify for HTTP handling\n- PostgreSQL with PgBouncer for connection pooling\n- Redis for idempotency and rate limiting\n- Kafka for async webhook processing\n- Docker and Kubernetes for deployment\n\n## Performance\n\n- 99.95% availability over 12 months\n- 45ms average response time at p99\n- 2 million transactions daily\n- 99.7% webhook delivery within 5 seconds`,proposal:`# Project Aurora\n\nA next-generation developer portal that unifies documentation, API exploration, SDK generation, and community interaction. Target launch: Q2 2025.\n\n## Background\n\nDeveloper experience is the new competitive moat. Companies like Stripe and Vercel have shown that best-in-class developer portals directly correlate with adoption and retention.\n\n## Opportunity\n\nBy consolidating touchpoints into one portal, we estimate 40% reduction in time-to-first-successful-API-call, 25% increase in developer NPS, and 30% reduction in support tickets.\n\n## Proposed Features\n\n- **Unified search** — Search across docs, API specs, and community posts\n- **Interactive API explorer** — Try endpoints directly in the docs\n- **Auto-generated SDKs** — From OpenAPI specs to typed SDKs in 8 languages\n- **Embedded code playground** — Run samples in-browser with WebContainers\n- **Community layer** — Ask questions and share snippets alongside docs\n- **Analytics dashboard** — See which docs drive adoption\n\n## Technical Approach\n\n- Next.js 14 with App Router for the portal shell\n- MDX with custom components for rich docs\n- WebContainers for in-browser code execution\n- Algolia for unified search\n- PostgreSQL with pgvector for semantic search\n- Kafka for event-driven SDK generation\n\n## Success Metrics\n\n- Time to first API call under 5 minutes\n- Developer NPS score above 70\n- 50% month-over-month growth in active developers\n- Support ticket reduction of 30% within 6 months\n\n## Timeline\n\n1. **Month 1-2**: Core portal shell, MDX pipeline, basic search\n2. **Month 3-4**: API explorer, code playground\n3. **Month 5**: SDK auto-generation pipeline\n4. **Month 6**: Community layer, analytics, beta launch`};
 
 // ============================================================
-// STATE & STORAGE
+// STATE
 // ============================================================
-const store = {
-  get: (k, d) => { try { const v = localStorage.getItem('is_'+k); return v !== null ? v : d; } catch { return d; } },
-  set: (k, v) => { try { localStorage.setItem('is_'+k, v); } catch {} },
-  clear: (k) => { try { localStorage.removeItem('is_'+k); } catch {} }
-};
+let S={parsedDoc:null,spec:null,ghMeta:null,theme:'midnight',variants:{},fs:false,analysisMode:'rule',analysisModel:''};
 
-const S = {
-  theme: store.get('theme', 'midnight'),
-  fs: false,
-  ghMeta: null,
-  parsedDoc: null,
-  variants: {},
-  spec: null,
-  analysisMode: 'rule',
-  analysisModel: ''
+// ============================================================
+// LOCAL STORAGE HELPERS
+// ============================================================
+const store={
+  get(k,d){try{const v=localStorage.getItem('is_'+k);return v!==null?JSON.parse(v):d}catch{return d}},
+  set(k,v){try{localStorage.setItem('is_'+k,JSON.stringify(v))}catch{}},
+  clear(k){try{localStorage.removeItem('is_'+k)}catch{}}
 };
 
 // ============================================================
-// PARSING & SPEC BUILDING
+// GITHUB API
 // ============================================================
-function parseMD(text) {
-  const doc = { title: '', subtitle: '', sections: [], features: [], techStack: [], steps: [], metrics: [], problem: '', solution: '', architecture: '', content: text };
-  const lines = text.split('\n');
-  let currentSection = null;
-  
-  for (const line of lines) {
-    const h1 = line.match(/^#\s+(.*)/);
-    const h2 = line.match(/^##\s+(.*)/);
-    const h3 = line.match(/^###\s+(.*)/);
-    const li = line.match(/^\s*[-*]\s+(.*)/);
-    const num = line.match(/^\s*\d+\.\s+(.*)/);
-    
-    if (h1) { doc.title = h1[1].trim(); continue; }
-    if (h2) { 
-      const title = h2[1].trim();
-      currentSection = { title, content: '', items: [] };
-      doc.sections.push(currentSection);
-      
-      const lower = title.toLowerCase();
-      if (SEC_PATTERNS.problem.test(lower)) currentSection._type = 'problem';
-      else if (SEC_PATTERNS.solution.test(lower)) currentSection._type = 'solution';
-      else if (SEC_PATTERNS.features.test(lower)) currentSection._type = 'features';
-      else if (SEC_PATTERNS['tech-stack'].test(lower)) currentSection._type = 'tech-stack';
-      else if (SEC_PATTERNS.steps.test(lower) || SEC_PATTERNS['getting-started'].test(lower)) currentSection._type = 'steps';
-      else if (SEC_PATTERNS.architecture.test(lower)) currentSection._type = 'architecture';
-      else if (SEC_PATTERNS.metrics.test(lower)) currentSection._type = 'metrics';
-      continue; 
-    }
-    
-    if (currentSection) {
-      if (li || num) {
-        const itemText = (li ? li[1] : num[1]).trim();
-        currentSection.items.push(itemText);
-        currentSection.content += itemText + ' ';
-        
-        if (currentSection._type === 'features') doc.features.push({ title: itemText.replace(/\*\*(.*?)\*\*/g, '$1'), description: '' });
-        if (currentSection._type === 'steps') doc.steps.push({ title: itemText.replace(/\*\*(.*?)\*\*/g, '$1'), description: '' });
-        if (currentSection._type === 'tech-stack') {
-          const found = TECH_KW.filter(kw => itemText.toLowerCase().includes(kw.toLowerCase()));
-          found.forEach(kw => doc.techStack.push(kw));
-        }
-      } else {
-        currentSection.content += line + ' ';
-        if (currentSection._type === 'problem' && line.trim().length > 20) doc.problem = line.trim();
-        if (currentSection._type === 'solution' && line.trim().length > 20) doc.solution = line.trim();
-        if (currentSection._type === 'architecture' && line.trim().length > 20) doc.architecture = line.trim();
-      }
-    } else {
-      if (line.trim().length > 10 && !doc.subtitle) doc.subtitle = line.trim();
-    }
+function parseRepoUrl(input){
+  input=input.trim().replace(/\/+$/,'');
+  // owner/repo
+  let m=input.match(/^([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)$/);
+  if(m)return{owner:m[1],repo:m[2]};
+  // https://github.com/owner/repo
+  m=input.match(/github\.com\/([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+)/);
+  if(m)return{owner:m[1],repo:m[2]};
+  return null;
+}
+
+async function fetchGitHub(repoInput){
+  const parsed=parseRepoUrl(repoInput);
+  if(!parsed)throw new Error('Could not parse repository URL. Use format: owner/repo');
+  const token=store.get('gh_token','');
+  const headers={'Accept':'application/vnd.github.v3+json'};
+  if(token)headers['Authorization']='token '+token;
+
+  const [repoRes,readmeRes]=await Promise.all([
+    fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}`,{headers}),
+    fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}/readme`,{headers}).catch(()=>null)
+  ]);
+
+  if(!repoRes.ok){
+    if(repoRes.status===404)throw new Error(parsed.repo==='undefined'?'Repository not found. Check the URL.':'Repository not found. If private, add a GitHub token in Settings.');
+    if(repoRes.status===403)throw new Error('Rate limited. Add a GitHub token in Settings for higher limits.');
+    throw new Error('GitHub API error: '+repoRes.status);
   }
-  
-  // Fallback tech stack extraction from entire text
-  if (doc.techStack.length < 3) {
-    const ex = new Set(doc.techStack.map(t => t.toLowerCase()));
-    TECH_KW.forEach(kw => {
-      if (text.toLowerCase().includes(kw.toLowerCase()) && !ex.has(kw.toLowerCase())) {
-        doc.techStack.push(kw); ex.add(kw.toLowerCase());
-      }
-    });
+  const rd=await repoRes.json();
+  let readme='';
+  if(readmeRes&&readmeRes.ok){
+    const rmd=await readmeRes.json();
+    try{readme=decodeURIComponent(escape(atob(rmd.content.replace(/\n/g,''))))}catch{readme=atob(rmd.content.replace(/\n/g,''))}
+  }
+  return{
+    metadata:{name:rd.name,description:rd.description,stars:rd.stargazers_count,forks:rd.forks_count,language:rd.language,license:rd.license?.name,topics:rd.topics||[],url:rd.html_url},
+    readme
+  };
+}
+
+function showGitHubMeta(meta){
+  const el=document.getElementById('gh-meta');
+  if(!meta){el.classList.remove('active');return}
+  el.classList.add('active');
+  let html=`<span class="gh-meta-item"><i class="fas fa-star" style="color:var(--accent)"></i> <strong>${fmtNum(meta.stars)}</strong></span>`;
+  html+=`<span class="gh-meta-item"><i class="fas fa-code-branch" style="color:var(--muted)"></i> <strong>${fmtNum(meta.forks)}</strong></span>`;
+  if(meta.language)html+=`<span class="gh-meta-item"><i class="fas fa-circle" style="color:var(--success);font-size:8px"></i> <strong>${meta.language}</strong></span>`;
+  if(meta.license)html+=`<span class="gh-meta-item"><i class="fas fa-scale-balanced" style="color:var(--muted)"></i> ${meta.license}</span>`;
+  if(meta.topics.length)html+=`<span class="gh-meta-item" style="color:var(--accent);font-size:10px">${meta.topics.slice(0,5).join(' · ')}</span>`;
+  el.innerHTML=html;
+}
+
+function fmtNum(n){if(n>=1000)return(n/1000).toFixed(n>=10000?0:1)+'k';return String(n)}
+
+// ============================================================
+// AI API
+// ============================================================
+const AI_SYSTEM=`You are an infographic content extractor. Given source material about a software project, extract key information and structure it as a JSON infographic specification.
+
+RULES:
+- Only include information actually present in the source material. Never invent claims.
+- Keep descriptions concise: 1-2 sentences max, under 150 characters each.
+- Extract exact metrics/numbers when available (e.g., "99.9%" not "high uptime").
+- Identify the tech stack from mentioned technologies, frameworks, and tools.
+- If a section type has no supporting content in the source, OMIT it entirely.
+- Feature titles: short and punchy, under 40 characters.
+- Tech stack items: well-known technology names only, no descriptions.
+- Stats: extract specific numbers with their labels.
+- Steps: preserve the original order, keep titles under 50 chars.
+- Maximum 6 features, 6 stats, 12 tech items, 5 steps.
+
+OUTPUT JSON (no markdown, no explanation):
+{
+  "title": "Project Name",
+  "subtitle": "One line description",
+  "sections": [
+    {"type": "stats", "items": [{"value": "99.9%", "label": "Uptime"}]},
+    {"type": "problem-solution", "problemTitle": "The Problem", "problem": "concise problem text", "solutionTitle": "The Solution", "solution": "concise solution text"},
+    {"type": "features", "title": "Features", "columns": 3, "items": [{"title": "Short title", "description": "Brief description"}]},
+    {"type": "tech-stack", "title": "Tech Stack", "items": ["React", "Node.js"]},
+    {"type": "steps", "title": "Getting Started", "items": [{"step": 1, "title": "Step title", "description": "Brief description"}]}
+  ]
+}`;
+
+async function analyzeWithAI(content,ghMeta){
+  const provider=store.get('provider','none');
+  const apiKey=provider==='groq'?store.get('groq_key',''):provider==='openrouter'?store.get('or_key',''):'';
+  if(!apiKey||provider==='none')return null;
+
+  const model=provider==='groq'?store.get('groq_model','llama-3.3-70b-versatile'):store.get('or_model','meta-llama/llama-3.3-70b-instruct:free');
+  const endpoint=provider==='groq'?'https://api.groq.com/openai/v1/chat/completions':'https://openrouter.ai/api/v1/chat/completions';
+
+  let userMsg='Source material:\n---\n'+content+'\n---';
+  if(ghMeta){
+    userMsg+='\n\nGitHub metadata:\n---\n'+JSON.stringify(ghMeta,null,2)+'\n---';
+  }
+
+  const headers={'Content-Type':'application/json','Authorization':'Bearer '+apiKey};
+  if(provider==='openrouter'){headers['HTTP-Referer']=window.location.origin;headers['X-Title']='Infographic Studio'}
+
+  const res=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify({model,messages:[{role:'system',content:AI_SYSTEM},{role:'user',content:userMsg}],temperature:0.15,max_tokens:4000})});
+
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    throw new Error(`AI API ${res.status}: ${err.error?.message||res.statusText}`);
+  }
+
+  const data=await res.json();
+  let text=data.choices?.[0]?.message?.content?.trim();
+  if(!text)throw new Error('Empty response from AI');
+
+  // Strip markdown code fences if present
+  if(text.startsWith('```'))text=text.replace(/^```(?:json)?\n?/,'').replace(/\n?```$/,'').trim();
+
+  const spec=JSON.parse(text);
+  // Validate minimum structure
+  if(!spec.title)throw new Error('AI returned invalid spec: missing title');
+  if(!Array.isArray(spec.sections))spec.sections=[];
+  // Add ids
+  spec.sections.forEach((s,i)=>{if(!s.id)s.id=s.type+'-'+i});
+  return{spec,provider,model};
+}
+
+// ============================================================
+// MARKDOWN PARSER
+// ============================================================
+function parseMD(text){
+  const lines=text.split('\n'),doc={title:'',subtitle:'',sections:[]};
+  let cur=null,inCode=false,hasSub=false;
+  for(const raw of lines){
+    if(raw.trim().startsWith('```')){inCode=!inCode;continue}
+    if(inCode)continue;
+    if(raw.trim()==='---'||raw.trim()==='***')continue;
+    if(raw.startsWith('# ')&&!raw.startsWith('## ')){doc.title=raw.slice(2).trim().replace(/\*\*/g,'')}
+    else if(raw.startsWith('## ')){cur={level:2,title:raw.slice(3).trim().replace(/\*\*/g,''),content:[],lists:[],rawText:''};doc.sections.push(cur)}
+    else if(raw.startsWith('### ')){cur={level:3,title:raw.slice(4).trim().replace(/\*\*/g,''),content:[],lists:[],rawText:''};doc.sections.push(cur)}
+    else if(raw.match(/^[-*]\s+/)){if(cur)cur.lists.push(raw.replace(/^[-*]\s+/,'').trim())}
+    else if(raw.match(/^\d+\.\s+/)){if(cur)cur.lists.push(raw.replace(/^\d+\.\s+/,'').trim())}
+    else if(raw.trim()==='')continue;
+    else{const c=raw.trim().replace(/\*\*/g,'').replace(/\*/g,'').replace(/`([^`]+)`/g,'$1');if(cur){cur.content.push(c);cur.rawText+=c+' '}else if(doc.title&&!hasSub&&c.length>10){doc.subtitle=c;hasSub=true}}
   }
   return doc;
 }
 
-function buildRuleSpec(parsedDoc, variants) {
-  const sections = [];
-  
-  // CONDITIONAL 1: Meaningful Metrics
-  const hasMeaningfulMetrics = S.ghMeta && (
-    (S.ghMeta.stars && S.ghMeta.stars >= 10) ||
-    (S.ghMeta.forks && S.ghMeta.forks >= 5) ||
-    (parsedDoc.metrics && parsedDoc.metrics.length >= 2)
-  );
-  
-  if (hasMeaningfulMetrics) {
-    const statsItems = [];
-    if (S.ghMeta.stars >= 10) statsItems.push({ label: 'Stars', value: fmtNum(S.ghMeta.stars) });
-    if (S.ghMeta.forks >= 5) statsItems.push({ label: 'Forks', value: fmtNum(S.ghMeta.forks) });
-    if (S.ghMeta.language) statsItems.push({ label: 'Primary Language', value: S.ghMeta.language });
-    
-    if (parsedDoc.metrics) {
-      parsedDoc.metrics.slice(0, Math.max(0, 3 - statsItems.length)).forEach(m => {
-        statsItems.push({ label: m.label, value: m.value });
-      });
-    }
-    
-    if (statsItems.length >= 2) {
-      sections.push({ id: 'stats', type: 'stats', items: statsItems });
-    }
-  }
-
-  // CONDITIONAL 2: Problem-Solution
-  if (isMeaningful(parsedDoc.problem, 20) || isMeaningful(parsedDoc.solution, 20)) {
-    sections.push({
-      id: 'problem-solution',
-      type: 'problem-solution',
-      problem: parsedDoc.problem || 'Current operational challenges',
-      problemTitle: 'The Challenge',
-      solution: parsedDoc.solution || 'Our streamlined approach',
-      solutionTitle: 'The Solution'
-    });
-  } else if (parsedDoc.sections && parsedDoc.sections.length > 0) {
-    // FALLBACK: Overview block if no problem/solution
-    const firstSec = parsedDoc.sections.find(s => s.content && s.content.length > 30);
-    if (firstSec) {
-      sections.push({ id: 'overview', type: 'content-block', title: 'Overview', text: smartTrunc(firstSec.content, 300) });
-    }
-  }
-
-  // CONDITIONAL 3: Features (needs 3+ items)
-  if (parsedDoc.features && parsedDoc.features.length >= 3) {
-    sections.push({
-      id: 'features',
-      type: 'features',
-      title: 'Key Features',
-      columns: Math.min(3, Math.ceil(parsedDoc.features.length / 2)),
-      items: parsedDoc.features.slice(0, 6).map(f => ({
-        title: f.title || f,
-        description: f.description || ''
-      }))
-    });
-  }
-
-  // CONDITIONAL 4: Tech Stack (needs 4+ items)
-  const allTech = new Set();
-  if (S.ghMeta?.topics) S.ghMeta.topics.forEach(t => allTech.add(t));
-  if (parsedDoc.techStack) parsedDoc.techStack.forEach(t => allTech.add(t));
-  
-  if (allTech.size >= 4) {
-    sections.push({
-      id: 'tech-stack',
-      type: 'tech-stack',
-      title: 'Technology Stack',
-      items: Array.from(allTech).slice(0, 12)
-    });
-  }
-
-  // CONDITIONAL 5: Steps/Workflow (needs 3+ items)
-  if (parsedDoc.steps && parsedDoc.steps.length >= 3) {
-    sections.push({
-      id: 'steps',
-      type: 'steps',
-      title: 'How It Works',
-      items: parsedDoc.steps.slice(0, 5).map((s, i) => ({
-        step: (i + 1).toString(),
-        title: s.title || s,
-        description: s.description || ''
-      }))
-    });
-  }
-
-  // CONDITIONAL 6: Architecture (needs substantial text)
-  if (isMeaningful(parsedDoc.architecture, 50)) {
-    sections.push({ id: 'architecture', type: 'content-block', title: 'Architecture', text: smartTrunc(parsedDoc.architecture, 400) });
-  }
-
-  // ULTIMATE FALLBACK: Ensure we always have *something*
-  if (sections.length === 0) {
-    sections.push({
-      id: 'fallback',
-      type: 'content-block',
-      title: 'About',
-      text: parsedDoc.content?.slice(0, 400) || S.ghMeta?.description || 'No detailed information available.'
-    });
-  }
-
-  return {
-    title: S.ghMeta?.name || parsedDoc.title || 'Project',
-    subtitle: S.ghMeta?.description || parsedDoc.subtitle || '',
-    sections: sections
-  };
+// ============================================================
+// RULE-BASED ANALYZER
+// ============================================================
+function classifySec(s){
+  const t=(s.title+' '+s.rawText).toLowerCase();
+  let best='generic',bs=0;
+  for(const[type,pat]of Object.entries(SEC_PATTERNS)){const m=t.match(pat);if(m&&m.length>bs){bs=m.length;best=type}}
+  return best;
 }
 
-function mergeGHMeta(spec, ghMeta) {
-  if (!ghMeta) return spec;
-  
-  const shouldAddStars = ghMeta.stars && ghMeta.stars >= 10;
-  const shouldAddForks = ghMeta.forks && ghMeta.forks >= 5;
-  
-  if (shouldAddStars || shouldAddForks) {
-    const statsSec = spec.sections.find(s => s.type === 'stats');
-    if (!statsSec) {
-      const statsItems = [];
-      if (shouldAddStars) statsItems.push({ label: 'Stars', value: fmtNum(ghMeta.stars) });
-      if (shouldAddForks) statsItems.push({ label: 'Forks', value: fmtNum(ghMeta.forks) });
-      if (statsItems.length >= 2) {
-        spec.sections.unshift({ id: 'stats', type: 'stats', items: statsItems });
-      }
-    }
+function extractMetrics(text){
+  const metrics=[],pats=[
+    {re:/(\d+\.?\d*)%?\s*(uptime|availability|reliability|coverage|accuracy)/gi,lf:m=>m[2].charAt(0).toUpperCase()+m[2].slice(1)},
+    {re:/(\d+\.?\d*)\+?\s*(users?|customers?|downloads?|stars?|installs?|developers?|teams?|organizations?|subscribers?|repositories?|repos?)/gi,lf:m=>m[2].charAt(0).toUpperCase()+m[2].slice(1)},
+    {re:/(\d+\.?\d*)\+?\s*(deployments?|transactions?|requests?|calls?|events?|messages?|builds?|releases?|integrations?|plugins?|components?|templates?|languages?|providers?|endpoints?)/gi,lf:m=>m[2].charAt(0).toUpperCase()+m[2].slice(1)},
+    {re:/(\d+\.?\d*)\s*(ms|seconds?|sec|milliseconds?)/gi,lf:m=>m[2].toUpperCase()+' Latency'},
+    {re:/(\d+\.?\d*)%?\s*(reduction|improvement|increase|faster|savings?|cheaper|growth)/gi,lf:m=>m[2].charAt(0).toUpperCase()+m[2].slice(1)},
+    {re:/(under|less than|within)\s*(\d+)\s*(minutes?|hours?|seconds?|days?)/gi,lf:m=>'< '+m[2]+' '+m[3]}
+  ];
+  for(const p of pats){let m;const rx=new RegExp(p.re.source,p.re.flags);while((m=rx.exec(text))!==null){metrics.push({value:m[1]||m[0],label:p.lf(m)})}}
+  const seen=new Set();return metrics.filter(m=>{if(seen.has(m.label))return false;seen.add(m.label);return true});
+}
+
+function extractTech(text){
+  const found=[],low=text.toLowerCase();
+  for(const t of TECH_KW){const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');if(new RegExp('\\b'+esc+'\\b','i').test(low)&&!found.includes(t))found.push(t)}
+  return found;
+}
+
+function splitFeat(text){
+  for(const p of[/^(.+?)\s*[—–-]\s*(.+)$/,/^(.+?)\s*:\s*(.+)$/]){
+    const m=text.match(p);
+    if(m){const t=m[1].trim().replace(/\*+/g,''),d=m[2].trim().replace(/\*+/g,'');if(t.length>2&&d.length>5)return{title:t,description:d}}
+  }
+  const c=text.replace(/\*+/g,'').trim();
+  return c.length>60?{title:c.slice(0,57)+'...',description:''}:{title:c,description:''};
+}
+
+function smartTrunc(text,max){
+  if(text.length<=max)return text;
+  const lines=text.split('\n'),result=[];let len=0;
+  if(lines[0]&&lines[0].startsWith('# ')){result.push(lines[0]);len+=lines[0].length+1}
+  const pri={problem:5,solution:5,features:5,'tech-stack':4,metrics:4,architecture:3,'getting-started':3,usage:2,api:2,roadmap:2,contributing:1,generic:1};
+  let secs=[],cur=[];
+  for(let i=1;i<lines.length;i++){
+    const l=lines[i];
+    if(l.startsWith('## ')||l.startsWith('### ')){
+      if(cur.length>0){const st=cur.join('\n');secs.push({lines:cur,pri:pri[classifySec({title:cur[0]?.replace(/^#+\s*/,'')||'',rawText:st})]||1});cur=[]}
+      cur=[l];
+    }else cur.push(l);
+  }
+  if(cur.length>0){const st=cur.join('\n');secs.push({lines:cur,pri:pri[classifySec({title:cur[0]?.replace(/^#+\s*/,'')||'',rawText:st})]||1})}
+  secs.sort((a,b)=>b.pri-a.pri);
+  for(const s of secs){const st=s.lines.join('\n')+'\n';if(len+st.length<=max){result.push(...s.lines);len+=st.length}}
+  return result.join('\n');
+}
+
+function buildRuleSpec(doc,vmap){
+  const spec={title:doc.title||'Untitled Project',subtitle:doc.subtitle||'',sections:[]};
+  const cls=doc.sections.map(s=>({...s,type:classifySec(s)}));
+  const prob=cls.find(s=>s.type==='problem'),sol=cls.find(s=>s.type==='solution');
+  if(prob||sol){
+    const v=(vmap?.['problem-solution']||0)%3;
+    spec.sections.push({id:'problem-solution',type:'problem-solution',problem:prob?trunc(prob.rawText,v===0?180:v===1?120:200):'',solution:sol?trunc(sol.rawText,v===0?180:v===1?120:200):'',problemTitle:prob?.title||'The Problem',solutionTitle:sol?.title||'The Solution'});
+  }
+  let metrics=[];
+  const mSec=cls.find(s=>s.type==='metrics');
+  if(mSec)metrics=extractMetrics(mSec.rawText+' '+mSec.lists.join(' '));
+  if(metrics.length<2)cls.forEach(s=>metrics.push(...extractMetrics(s.rawText+' '+s.lists.join(' '))));
+  if(metrics.length>=2){const v=(vmap?.['stats']||0)%2;spec.sections.push({id:'stats',type:'stats',items:metrics.slice(0,v===0?4:3)})}
+  const featSec=cls.find(s=>s.type==='features');
+  let featSrc=featSec;
+  if(!featSrc||featSrc.lists.length<3)featSrc=cls.find(s=>s.lists.length>=3&&s.type!=='getting-started'&&s.type!=='tech-stack');
+  if(featSrc&&featSrc.lists.length>0){
+    const v=(vmap?.['features']||0)%3,cnt=v===0?6:v===1?4:3,cols=v===1?2:3;
+    spec.sections.push({id:'features',type:'features',title:featSrc.title,columns:cols,items:featSrc.lists.slice(0,cnt).map(f=>splitFeat(f))});
+  }
+  const techSec=cls.find(s=>s.type==='tech-stack');
+  let techs=techSec?extractTech(techSec.rawText+' '+techSec.lists.join(' ')+' '+techSec.title):[];
+  if(techs.length<2)techs=extractTech(doc.title+' '+doc.subtitle+' '+doc.sections.map(s=>s.rawText+' '+s.lists.join(' ')).join(' '));
+  if(techs.length>=2)spec.sections.push({id:'tech-stack',type:'tech-stack',title:techSec?.title||'Tech Stack',items:techs.slice(0,12)});
+  const stepsSec=cls.find(s=>s.type==='getting-started'||s.type==='usage');
+  if(stepsSec&&stepsSec.lists.length>=2)spec.sections.push({id:'steps',type:'steps',title:stepsSec.title,items:stepsSec.lists.slice(0,4).map((s,i)=>{const sp=splitFeat(s);return{step:i+1,title:sp.title,description:sp.description}})});
+  const usedTypes=new Set(['problem','solution','features','tech-stack','getting-started','usage','metrics']);
+  const rem=cls.filter(s=>!usedTypes.has(s.type)&&s.rawText.length>30);
+  if(rem.length>0&&spec.sections.length<6){
+    const s=rem[0];
+    if(s.lists.length>=2)spec.sections.push({id:'content-list',type:'content-list',title:s.title,items:s.lists.slice(0,5).map(l=>splitFeat(l))});
+    else if(s.rawText.length>40)spec.sections.push({id:'content-block',type:'content-block',title:s.title,text:trunc(s.rawText,250)});
+  }
+  return spec;
+}
+
+function trunc(t,m){if(!t)return '';const c=t.replace(/\s+/g,' ').trim();return c.length<=m?c:c.slice(0,m-3).trim()+'...'}
+function mergeGHMeta(spec,meta){
+  if(!meta)return spec;
+  if(meta.description&&!spec.subtitle)spec.subtitle=meta.description;
+  let stats=spec.sections.find(s=>s.type==='stats');
+  if(!stats){stats={id:'stats',type:'stats',items:[]};spec.sections.unshift(stats)}
+  if(meta.stars!==undefined)stats.items.unshift({value:fmtNum(meta.stars),label:'Stars'});
+  if(meta.forks!==undefined)stats.items.push({value:fmtNum(meta.forks),label:'Forks'});
+  if(meta.language)stats.items.push({value:meta.language,label:'Language'});
+  if(meta.license)stats.items.push({value:meta.license,label:'License'});
+  stats.items=stats.items.slice(0,6);
+  if(meta.topics?.length){
+    let tech=spec.sections.find(s=>s.type==='tech-stack');
+    if(!tech){tech={id:'tech-stack',type:'tech-stack',title:'Topics',items:[]};spec.sections.push(tech)}
+    const ex=new Set(tech.items.map(t=>t.toLowerCase()));
+    for(const t of meta.topics)if(!ex.has(t.toLowerCase())){tech.items.push(t);ex.add(t.toLowerCase())}
   }
   return spec;
 }
 
 // ============================================================
-// SVG RENDERER (With Adaptive Scaling & Dynamic Spacing)
+// SVG RENDERER
 // ============================================================
-function renderSVG(spec, tn) {
-  const t = THEMES[tn];
-  let y = 0, parts = [], sids = [];
-  
-  // Dynamic section gap based on content density
-  const sectionCount = spec.sections.length;
-  const dynamicGap = sectionCount > 5 ? 25 : 40;
-  
-  const defs = `<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(${t.accentRgb},0.2)"/><stop offset="100%" stop-color="rgba(${t.accentRgb},0)"/></linearGradient><linearGradient id="al" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${t.accent}"/><stop offset="100%" stop-color="rgba(${t.accentRgb},0.2)"/></linearGradient><filter id="cs" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="rgba(0,0,0,0.25)"/></filter><pattern id="dg" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="0.7" fill="${t.dotGrid}"/></pattern></defs>`;
-  
-  const hh = spec.subtitle ? 180 : 140;
-  parts.push(rHero(spec, t, 0, hh));
-  y += hh;
-  
-  for (const sec of spec.sections) {
-    sids.push(sec.id);
-    y += dynamicGap; // Use dynamic gap
-    
-    switch(sec.type) {
-      case 'stats': {
-        const h = 110;
-        parts.push(rStats(sec, t, y, h));
-        y += h;
-        break;
-      }
-      case 'problem-solution': {
-        const h = 170;
-        parts.push(rPS(sec, t, y, h));
-        y += h;
-        break;
-      }
-      case 'features': {
-        const cols = sec.columns || 3;
-        const r = Math.ceil(sec.items.length / cols);
-        const h = 50 + r * 110 + (r - 1) * 12;
-        parts.push(rFeats(sec, t, y, h, cols));
-        y += h;
-        break;
-      }
-      case 'tech-stack': {
-        const cols = 4;
-        const r = Math.ceil(sec.items.length / cols);
-        const h = 50 + r * 44 + (r - 1) * 10;
-        parts.push(rTech(sec, t, y, h, cols));
-        y += h;
-        break;
-      }
-      case 'steps': {
-        const h = 50 + sec.items.length * 70 + (sec.items.length - 1) * 12;
-        parts.push(rSteps(sec, t, y, h));
-        y += h;
-        break;
-      }
-      case 'content-list': {
-        const r = Math.ceil(sec.items.length / 2);
-        const h = 50 + r * 90 + (r - 1) * 12;
-        parts.push(rCL(sec, t, y, h));
-        y += h;
-        break;
-      }
-      case 'content-block': {
-        const h = Math.max(120, 80 + Math.ceil((sec.text || '').length / 70) * 20);
-        parts.push(rCB(sec, t, y, h));
-        y += h;
-        break;
-      }
+function renderSVG(spec,tn){
+  const t=THEMES[tn];let y=0,parts=[],sids=[];
+  const defs=`<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(${t.accentRgb},0.2)"/><stop offset="100%" stop-color="rgba(${t.accentRgb},0)"/></linearGradient><linearGradient id="al" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${t.accent}"/><stop offset="100%" stop-color="rgba(${t.accentRgb},0.2)"/></linearGradient><filter id="cs" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="rgba(0,0,0,0.25)"/></filter><pattern id="dg" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="12" cy="12" r="0.7" fill="${t.dotGrid}"/></pattern></defs>`;
+  const hh=spec.subtitle?180:140;parts.push(rHero(spec,t,0,hh));y+=hh;
+  for(const sec of spec.sections){
+    sids.push(sec.id);y+=SGAP;
+    switch(sec.type){
+      case'stats':{const h=110;parts.push(rStats(sec,t,y,h));y+=h;break}
+      case'problem-solution':{const h=170;parts.push(rPS(sec,t,y,h));y+=h;break}
+      case'features':{const c=sec.columns||3,r=Math.ceil(sec.items.length/c),h=50+r*110+(r-1)*12;parts.push(rFeats(sec,t,y,h,c));y+=h;break}
+      case'tech-stack':{const r=Math.ceil(sec.items.length/4),h=50+r*44+(r-1)*10;parts.push(rTech(sec,t,y,h));y+=h;break}
+      case'steps':{const h=50+sec.items.length*70+(sec.items.length-1)*12;parts.push(rSteps(sec,t,y,h));y+=h;break}
+      case'content-list':{const r=Math.ceil(sec.items.length/2),h=50+r*90+(r-1)*12;parts.push(rCL(sec,t,y,h));y+=h;break}
+      case'content-block':{const h=Math.max(120,80+Math.ceil(sec.text.length/70)*20);parts.push(rCB(sec,t,y,h));y+=h;break}
     }
   }
-  
-  y += dynamicGap;
-  const fh = 50;
-  parts.push(rFoot(t, y, fh));
-  y += fh;
-  
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${y}" viewBox="0 0 ${W} ${y}" role="img" aria-label="Infographic for ${esc(spec.title)}" style="font-family:${FF};"><title>Infographic: ${esc(spec.title)}</title><desc>${esc(spec.subtitle || 'Auto-generated infographic')}</desc>${defs}<rect width="${W}" height="${y}" fill="${t.bg}"/><rect width="${W}" height="${y}" fill="url(#dg)"/>${parts.join('\n')}</svg>`;
+  y+=SGAP;const fh=50;parts.push(rFoot(t,y,fh));y+=fh;
+  return`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${y}" viewBox="0 0 ${W} ${y}" role="img" aria-label="Infographic for ${esc(spec.title)}" style="font-family:${FF};"><title>Infographic: ${esc(spec.title)}</title><desc>${esc(spec.subtitle||'Auto-generated infographic')}</desc>${defs}<rect width="${W}" height="${y}" fill="${t.bg}"/><rect width="${W}" height="${y}" fill="url(#dg)"/>${parts.join('\n')}</svg>`;
 }
 
-function rHero(s, t, y, h) {
-  const tl = wrapT(s.title, 52, 34);
-  const maxTitleLines = Math.min(3, Math.ceil(s.title.length / 45));
-  const fontSize = tl.length > 2 ? 28 : 34; // Auto-scale font
-  const th = tl.length * (fontSize + 8);
-  const hasSubtitle = s.subtitle && s.subtitle.length > 10;
-  const actualHeight = hasSubtitle ? Math.max(180, th + 80) : Math.max(140, th + 40);
-  const tsy = y + 60 + (actualHeight - 60 - th - (hasSubtitle ? 28 : 0)) / 2;
-  
-  let svg = `<rect x="0" y="${y}" width="${W}" height="${actualHeight}" fill="${t.glowColor}" aria-hidden="true"/><ellipse cx="${W-80}" cy="${y+actualHeight/2}" rx="200" ry="${actualHeight/2+20}" fill="url(#hg)" aria-hidden="true"/><rect x="${PAD}" y="${y+actualHeight-2}" width="120" height="3" rx="1.5" fill="url(#al)" aria-hidden="true"/>`;
-  
-  tl.forEach((l, i) => {
-    svg += `\n<text x="${PAD}" y="${tsy + i * (fontSize + 8)}" font-size="${fontSize}" font-weight="800" fill="${t.textPrimary}" letter-spacing="-0.5">${esc(l)}</text>`;
-  });
-  
-  if (hasSubtitle) {
-    wrapT(s.subtitle, 80, 16).slice(0, 2).forEach((l, i) => {
-      svg += `\n<text x="${PAD}" y="${tsy + th + 12 + i * 24}" font-size="16" font-weight="400" fill="${t.textSecondary}">${esc(l)}</text>`;
-    });
-  }
+function rHero(s,t,y,h){
+  const tl=wrapT(s.title,52,34),th=tl.length*42,tsy=y+60+(h-60-th-(s.subtitle?28:0))/2;
+  let svg=`<rect x="0" y="${y}" width="${W}" height="${h}" fill="${t.glowColor}" aria-hidden="true"/><ellipse cx="${W-80}" cy="${y+h/2}" rx="200" ry="${h/2+20}" fill="url(#hg)" aria-hidden="true"/><rect x="${PAD}" y="${y+h-2}" width="120" height="3" rx="1.5" fill="url(#al)" aria-hidden="true"/>`;
+  tl.forEach((l,i)=>{svg+=`\n<text x="${PAD}" y="${tsy+i*42}" font-size="34" font-weight="800" fill="${t.textPrimary}" letter-spacing="-0.5">${esc(l)}</text>`});
+  if(s.subtitle){wrapT(s.subtitle,80,16).forEach((l,i)=>{svg+=`\n<text x="${PAD}" y="${tsy+th+12+i*24}" font-size="16" font-weight="400" fill="${t.textSecondary}">${esc(l)}</text>`})}
   return svg;
 }
 
-function rStats(s, t, y, h) {
-  const n = s.items.length, g = 14, cw = (CW - g * (n - 1)) / n;
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">KEY METRICS</text>`;
-  s.items.forEach((it, i) => {
-    const x = PAD + i * (cw + g);
-    svg += `\n<g><rect x="${x}" y="${y+30}" width="${cw}" height="${h-30}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><rect x="${x}" y="${y+30}" width="${cw}" height="3" rx="1.5" fill="${t.accent}" opacity="0.6" aria-hidden="true"/><text x="${x+cw/2}" y="${y+72}" text-anchor="middle" font-size="28" font-weight="800" fill="${t.accent}">${esc(it.value)}</text><text x="${x+cw/2}" y="${y+96}" text-anchor="middle" font-size="11" font-weight="500" fill="${t.textSecondary}">${esc(it.label)}</text></g>`;
-  });
+function rStats(s,t,y,h){
+  const n=s.items.length,g=14,cw=(CW-g*(n-1))/n;
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">KEY METRICS</text>`;
+  s.items.forEach((it,i)=>{
+    const x=PAD+i*(cw+g);
+    svg+=`\n<g><rect x="${x}" y="${y+30}" width="${cw}" height="${h-30}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><rect x="${x}" y="${y+30}" width="${cw}" height="3" rx="1.5" fill="${t.accent}" opacity="0.6" aria-hidden="true"/><text x="${x+cw/2}" y="${y+72}" text-anchor="middle" font-size="28" font-weight="800" fill="${t.accent}">${esc(it.value)}</text><text x="${x+cw/2}" y="${y+96}" text-anchor="middle" font-size="11" font-weight="500" fill="${t.textSecondary}">${esc(it.label)}</text></g>`;
+  });return svg;
+}
+
+function rPS(s,t,y,h){
+  const aw=40,bw=(CW-aw)/2,bh=h-50,by=y+50;
+  const pl=wrapT(s.problem,50,13),sl=wrapT(s.solution,50,13);
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">PROBLEM → SOLUTION</text>`;
+  svg+=`\n<g><rect x="${PAD}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="${t.card}" stroke="rgba(${t.dangerRgb},0.25)" stroke-width="1" filter="url(#cs)"/><rect x="${PAD}" y="${by}" width="4" height="${bh}" rx="2" fill="${t.danger}" aria-hidden="true"/><text x="${PAD+20}" y="${by+28}" font-size="14" font-weight="700" fill="${t.danger}">${esc(s.problemTitle)}</text>`;
+  pl.forEach((l,i)=>{svg+=`\n<text x="${PAD+20}" y="${by+52+i*20}" font-size="13" fill="${t.textSecondary}">${esc(l)}</text>`});
+  svg+=`\n</g>`;
+  const ax=PAD+bw+(aw-20)/2,ay=by+bh/2;
+  svg+=`\n<g aria-hidden="true"><line x1="${ax}" y1="${ay}" x2="${ax+16}" y2="${ay}" stroke="${t.accent}" stroke-width="2"/><polygon points="${ax+14},${ay-5} ${ax+22},${ay} ${ax+14},${ay+5}" fill="${t.accent}"/></g>`;
+  const sx=PAD+bw+aw;
+  svg+=`\n<g><rect x="${sx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="${t.card}" stroke="rgba(${t.successRgb},0.25)" stroke-width="1" filter="url(#cs)"/><rect x="${sx}" y="${by}" width="4" height="${bh}" rx="2" fill="${t.success}" aria-hidden="true"/><text x="${sx+20}" y="${by+28}" font-size="14" font-weight="700" fill="${t.success}">${esc(s.solutionTitle)}</text>`;
+  sl.forEach((l,i)=>{svg+=`\n<text x="${sx+20}" y="${by+52+i*20}" font-size="13" fill="${t.textSecondary}">${esc(l)}</text>`});
+  svg+=`\n</g>`;return svg;
+}
+
+function rFeats(s,t,y,h,cols){
+  const g=12,cw=(CW-g*(cols-1))/cols,ch=98;
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
+  s.items.forEach((it,i)=>{
+    const col=i%cols,row=Math.floor(i/cols),x=PAD+col*(cw+g),cy=y+34+row*(ch+g);
+    svg+=`\n<g><rect x="${x}" y="${cy}" width="${cw}" height="${ch}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><circle cx="${x+20}" cy="${cy+20}" r="6" fill="rgba(${t.accentRgb},0.15)" aria-hidden="true"/><circle cx="${x+20}" cy="${cy+20}" r="2.5" fill="${t.accent}" aria-hidden="true"/><text x="${x+34}" y="${cy+24}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title,38))}</text>`;
+    if(it.description)wrapT(it.description,40,12).slice(0,3).forEach((l,li)=>{svg+=`\n<text x="${x+20}" y="${cy+46+li*17}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`});
+    svg+=`\n</g>`;
+  });return svg;
+}
+
+function rTech(s,t,y,h){
+  const cols=4,g=10,bw=(CW-g*(cols-1))/cols,bh=34;
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
+  s.items.forEach((tech,i)=>{
+    const col=i%cols,row=Math.floor(i/cols),x=PAD+col*(bw+g),by=y+34+row*(bh+g);
+    svg+=`\n<g><rect x="${x}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1"/><circle cx="${x+16}" cy="${by+bh/2}" r="4" fill="rgba(${t.accentRgb},0.2)" aria-hidden="true"/><circle cx="${x+16}" cy="${by+bh/2}" r="1.8" fill="${t.accent}" aria-hidden="true"/><text x="${x+28}" y="${by+bh/2+4.5}" font-size="12.5" font-weight="500" fill="${t.textPrimary}">${esc(tech)}</text></g>`;
+  });return svg;
+}
+
+function rSteps(s,t,y,h){
+  const sh=58,g=12,lx=PAD+16;
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
+  if(s.items.length>1){const ls=y+34+sh/2,le=y+34+(s.items.length-1)*(sh+g)+sh/2;svg+=`\n<line x1="${lx}" y1="${ls}" x2="${lx}" y2="${le}" stroke="${t.cardBorder}" stroke-width="2" stroke-dasharray="4,4" aria-hidden="true"/>`}
+  s.items.forEach((it,i)=>{
+    const sy=y+34+i*(sh+g),cx=PAD+40;
+    svg+=`\n<g><circle cx="${lx}" cy="${sy+sh/2}" r="14" fill="${t.card}" stroke="${t.accent}" stroke-width="2"/><text x="${lx}" y="${sy+sh/2+5}" text-anchor="middle" font-size="12" font-weight="700" fill="${t.accent}">${it.step}</text><rect x="${cx}" y="${sy}" width="${CW-40}" height="${sh}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><text x="${cx+18}" y="${sy+24}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title,60))}</text>`;
+    if(it.description)wrapT(it.description,70,12).slice(0,2).forEach((l,li)=>{svg+=`\n<text x="${cx+18}" y="${sy+42+li*16}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`});
+    svg+=`\n</g>`;
+  });return svg;
+}
+
+function rCL(s,t,y,h){
+  const g=12,cw=(CW-g)/2,ch=78;
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
+  s.items.forEach((it,i)=>{
+    const col=i%2,row=Math.floor(i/2),x=PAD+col*(cw+g),cy=y+34+row*(ch+g);
+    svg+=`\n<g><rect x="${x}" y="${cy}" width="${cw}" height="${ch}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><rect x="${x}" y="${cy}" width="3" height="${ch}" rx="1.5" fill="${t.accent}" opacity="0.5" aria-hidden="true"/><text x="${x+16}" y="${cy+28}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title,40))}</text>`;
+    if(it.description)wrapT(it.description,48,12).slice(0,2).forEach((l,li)=>{svg+=`\n<text x="${x+16}" y="${cy+48+li*16}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`});
+    svg+=`\n</g>`;
+  });return svg;
+}
+
+function rCB(s,t,y,h){
+  const lines=wrapT(s.text,75,14);
+  let svg=`<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text><rect x="${PAD}" y="${y+30}" width="${CW}" height="${h-30}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/>`;
+  lines.forEach((l,i)=>{svg+=`\n<text x="${PAD+20}" y="${y+56+i*22}" font-size="14" fill="${t.textSecondary}">${esc(l)}</text>`});
   return svg;
 }
 
-function rPS(s, t, y, h) {
-  const aw = 40, bw = (CW - aw) / 2, bh = h - 50, by = y + 50;
-  const pl = wrapT(s.problem, 50, 13), sl = wrapT(s.solution, 50, 13);
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">PROBLEM → SOLUTION</text>`;
-  
-  svg += `\n<g><rect x="${PAD}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="${t.card}" stroke="rgba(${t.dangerRgb},0.25)" stroke-width="1" filter="url(#cs)"/><rect x="${PAD}" y="${by}" width="4" height="${bh}" rx="2" fill="${t.danger}" aria-hidden="true"/><text x="${PAD+20}" y="${by+28}" font-size="14" font-weight="700" fill="${t.danger}">${esc(s.problemTitle)}</text>`;
-  pl.forEach((l, i) => { svg += `\n<text x="${PAD+20}" y="${by+52+i*20}" font-size="13" fill="${t.textSecondary}">${esc(l)}</text>`; });
-  svg += `\n</g>`;
-  
-  const ax = PAD + bw + (aw - 20) / 2, ay = by + bh / 2;
-  svg += `\n<g aria-hidden="true"><line x1="${ax}" y1="${ay}" x2="${ax+16}" y2="${ay}" stroke="${t.accent}" stroke-width="2"/><polygon points="${ax+14},${ay-5} ${ax+22},${ay} ${ax+14},${ay+5}" fill="${t.accent}"/></g>`;
-  
-  const sx = PAD + bw + aw;
-  svg += `\n<g><rect x="${sx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="${t.card}" stroke="rgba(${t.successRgb},0.25)" stroke-width="1" filter="url(#cs)"/><rect x="${sx}" y="${by}" width="4" height="${bh}" rx="2" fill="${t.success}" aria-hidden="true"/><text x="${sx+20}" y="${by+28}" font-size="14" font-weight="700" fill="${t.success}">${esc(s.solutionTitle)}</text>`;
-  sl.forEach((l, i) => { svg += `\n<text x="${sx+20}" y="${by+52+i*20}" font-size="13" fill="${t.textSecondary}">${esc(l)}</text>`; });
-  svg += `\n</g>`;
-  return svg;
-}
+function rFoot(t,y,h){return`\n<rect x="0" y="${y}" width="${W}" height="${h}" fill="${t.footerBg}" aria-hidden="true"/><text x="${W/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" fill="${t.sectionLabel}">Generated with Infographic Studio</text>`}
 
-function rFeats(s, t, y, h, cols) {
-  const g = 12, cw = (CW - g * (cols - 1)) / cols, ch = 98;
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
-  s.items.forEach((it, i) => {
-    const col = i % cols, row = Math.floor(i / cols), x = PAD + col * (cw + g), cy = y + 34 + row * (ch + g);
-    svg += `\n<g><rect x="${x}" y="${cy}" width="${cw}" height="${ch}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><circle cx="${x+20}" cy="${cy+20}" r="6" fill="rgba(${t.accentRgb},0.15)" aria-hidden="true"/><circle cx="${x+20}" cy="${cy+20}" r="2.5" fill="${t.accent}" aria-hidden="true"/><text x="${x+34}" y="${cy+24}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title, 38))}</text>`;
-    if (it.description) wrapT(it.description, 40, 12).slice(0, 3).forEach((l, li) => { svg += `\n<text x="${x+20}" y="${cy+46+li*17}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`; });
-    svg += `\n</g>`;
-  });
-  return svg;
-}
-
-function rTech(s, t, y, h, cols) {
-  const g = 10, bw = (CW - g * (cols - 1)) / cols, bh = 34;
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
-  s.items.forEach((tech, i) => {
-    const col = i % cols, row = Math.floor(i / cols), x = PAD + col * (bw + g), by = y + 34 + row * (bh + g);
-    svg += `\n<g><rect x="${x}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1"/><circle cx="${x+16}" cy="${by+bh/2}" r="4" fill="rgba(${t.accentRgb},0.2)" aria-hidden="true"/><circle cx="${x+16}" cy="${by+bh/2}" r="1.8" fill="${t.accent}" aria-hidden="true"/><text x="${x+28}" y="${by+bh/2+4.5}" font-size="12.5" font-weight="500" fill="${t.textPrimary}">${esc(tech)}</text></g>`;
-  });
-  return svg;
-}
-
-function rSteps(s, t, y, h) {
-  const sh = 58, g = 12, lx = PAD + 16;
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
-  if (s.items.length > 1) {
-    const ls = y + 34 + sh / 2, le = y + 34 + (s.items.length - 1) * (sh + g) + sh / 2;
-    svg += `\n<line x1="${lx}" y1="${ls}" x2="${lx}" y2="${le}" stroke="${t.cardBorder}" stroke-width="2" stroke-dasharray="4,4" aria-hidden="true"/>`;
-  }
-  s.items.forEach((it, i) => {
-    const sy = y + 34 + i * (sh + g), cx = PAD + 40;
-    svg += `\n<g><circle cx="${lx}" cy="${sy+sh/2}" r="14" fill="${t.card}" stroke="${t.accent}" stroke-width="2"/><text x="${lx}" y="${sy+sh/2+5}" text-anchor="middle" font-size="12" font-weight="700" fill="${t.accent}">${it.step}</text><rect x="${cx}" y="${sy}" width="${CW-40}" height="${sh}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><text x="${cx+18}" y="${sy+24}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title, 60))}</text>`;
-    if (it.description) wrapT(it.description, 70, 12).slice(0, 2).forEach((l, li) => { svg += `\n<text x="${cx+18}" y="${sy+42+li*16}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`; });
-    svg += `\n</g>`;
-  });
-  return svg;
-}
-
-function rCL(s, t, y, h) {
-  const g = 12, cw = (CW - g) / 2, ch = 78;
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text>`;
-  s.items.forEach((it, i) => {
-    const col = i % 2, row = Math.floor(i / 2), x = PAD + col * (cw + g), cy = y + 34 + row * (ch + g);
-    svg += `\n<g><rect x="${x}" y="${cy}" width="${cw}" height="${ch}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/><rect x="${x}" y="${cy}" width="3" height="${ch}" rx="1.5" fill="${t.accent}" opacity="0.5" aria-hidden="true"/><text x="${x+16}" y="${cy+28}" font-size="13" font-weight="600" fill="${t.textPrimary}">${esc(trunc(it.title, 40))}</text>`;
-    if (it.description) wrapT(it.description, 48, 12).slice(0, 2).forEach((l, li) => { svg += `\n<text x="${x+16}" y="${cy+48+li*16}" font-size="12" fill="${t.textSecondary}">${esc(l)}</text>`; });
-    svg += `\n</g>`;
-  });
-  return svg;
-}
-
-function rCB(s, t, y, h) {
-  const lines = wrapT(s.text || '', 75, 14);
-  let svg = `<text x="${PAD}" y="${y+16}" font-size="11" font-weight="600" fill="${t.sectionLabel}" letter-spacing="2.5">${esc(s.title.toUpperCase())}</text><rect x="${PAD}" y="${y+30}" width="${CW}" height="${h-30}" rx="10" fill="${t.card}" stroke="${t.cardBorder}" stroke-width="1" filter="url(#cs)"/>`;
-  lines.forEach((l, i) => { svg += `\n<text x="${PAD+20}" y="${y+56+i*22}" font-size="14" fill="${t.textSecondary}">${esc(l)}</text>`; });
-  return svg;
-}
-
-function rFoot(t, y, h) {
-  return `\n<rect x="0" y="${y}" width="${W}" height="${h}" fill="${t.footerBg}" aria-hidden="true"/><text x="${W/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" fill="${t.sectionLabel}">Generated with Infographic Studio</text>`;
-}
-
-function wrapT(text, mc, fs) {
-  if (!text) return [];
-  const words = text.split(' '), lines = [];
-  let cur = '';
-  for (const w of words) {
-    if ((cur + ' ' + w).trim().length > mc && cur.length > 0) {
-      lines.push(cur.trim()); cur = w;
-    } else {
-      cur = (cur + ' ' + w).trim();
-    }
-  }
-  if (cur.trim()) lines.push(cur.trim());
-  return lines;
-}
-
-function esc(s) {
-  if (!s) return '';
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function trunc(s, n) {
-  if (!s) return '';
-  return s.length > n ? s.substring(0, n) + '…' : s;
-}
+function wrapT(text,mc){if(!text)return[];const words=text.split(' '),lines=[];let cur='';for(const w of words){if((cur+' '+w).trim().length>mc&&cur.length>0){lines.push(cur.trim());cur=w}else cur=(cur+' '+w).trim()}if(cur.trim())lines.push(cur.trim());return lines}
+function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // ============================================================
 // DOM REFS
 // ============================================================
-const $ = id => document.getElementById(id);
-const $input = $('source-input'), $charCt = $('char-ct'), $genBtn = $('gen-btn'),
-  $empty = $('empty-state'), $ic = $('infographic-container'), $iw = $('infographic-wrapper'),
-  $lo = $('loading-overlay'), $ldText = $('ld-text'), $chips = $('sec-chips'),
-  $ghUrl = $('gh-url'), $ghFetch = $('gh-fetch-btn'), $ghMeta = $('gh-meta'),
-  $modeBadge = $('mode-badge'), $tmplSel = $('tmpl-sel');
+const $=id=>document.getElementById(id);
+const $input=$('source-input'),$charCt=$('char-ct'),$genBtn=$('gen-btn'),
+  $empty=$('empty-state'),$ic=$('infographic-container'),$iw=$('infographic-wrapper'),
+  $lo=$('loading-overlay'),$ldText=$('ld-text'),$chips=$('sec-chips'),
+  $ghUrl=$('gh-url'),$ghFetch=$('gh-fetch-btn'),$ghMeta=$('gh-meta'),
+  $modeBadge=$('mode-badge'),$tmplSel=$('tmpl-sel');
 
 // ============================================================
 // INPUT HANDLING
 // ============================================================
-$input.addEventListener('input', () => {
-  const l = $input.value.length;
-  $charCt.textContent = l.toLocaleString() + ' / 38,000';
-  $charCt.className = 'char-ct' + (l > MAX_CHARS ? ' danger' : l > MAX_CHARS * 0.85 ? ' warn' : '');
-  $genBtn.disabled = l < 20;
+ $input.addEventListener('input',()=>{
+  const l=$input.value.length;
+  $charCt.textContent=l.toLocaleString()+' / 38,000';
+  $charCt.className='char-ct'+(l>MAX_CHARS?' danger':l>MAX_CHARS*.85?' warn':'');
+  $genBtn.disabled=l<20;
 });
 
-$input.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); if (!$genBtn.disabled) generate(); }
-  if (e.key === 'Tab') {
-    e.preventDefault();
-    const s = $input.selectionStart, en = $input.selectionEnd;
-    $input.value = $input.value.substring(0, s) + '  ' + $input.value.substring(en);
-    $input.selectionStart = $input.selectionEnd = s + 2;
-    $input.dispatchEvent(new Event('input'));
-  }
+ $input.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();if(!$genBtn.disabled)generate()}
+  if(e.key==='Tab'){e.preventDefault();const s=$input.selectionStart,en=$input.selectionEnd;$input.value=$input.value.substring(0,s)+'  '+$input.value.substring(en);$input.selectionStart=$input.selectionEnd=s+2;$input.dispatchEvent(new Event('input'))}
 });
 
-$input.addEventListener('dragover', e => { e.preventDefault(); $input.style.borderColor = 'var(--accent)'; });
-$input.addEventListener('dragleave', () => { $input.style.borderColor = ''; });
-$input.addEventListener('drop', e => {
-  e.preventDefault(); $input.style.borderColor = '';
-  const f = e.dataTransfer.files[0];
-  if (f && (f.type === 'text/plain' || f.type === 'text/markdown' || f.name.endsWith('.md') || f.name.endsWith('.txt'))) {
-    const r = new FileReader();
-    r.onload = ev => { $input.value = ev.target.result; $input.dispatchEvent(new Event('input')); toast('Loaded ' + f.name); };
-    r.readAsText(f);
-  } else {
-    toast('Drop a .md or .txt file', 'error');
-  }
+ $input.addEventListener('dragover',e=>{e.preventDefault();$input.style.borderColor='var(--accent)'});
+ $input.addEventListener('dragleave',()=>{$input.style.borderColor=''});
+ $input.addEventListener('drop',e=>{
+  e.preventDefault();$input.style.borderColor='';
+  const f=e.dataTransfer.files[0];
+  if(f&&(f.type==='text/plain'||f.type==='text/markdown'||f.name.endsWith('.md')||f.name.endsWith('.txt'))){
+    const r=new FileReader();r.onload=ev=>{$input.value=ev.target.result;$input.dispatchEvent(new Event('input'));toast('Loaded '+f.name)};r.readAsText(f);
+  }else toast('Drop a .md or .txt file');
 });
 
 // ============================================================
 // GITHUB FETCH
 // ============================================================
-async function fetchGitHub(url) {
-  const token = store.get('gh_token', '');
-  const headers = { 'Accept': 'application/vnd.github.v3+json' };
-  if (token) headers['Authorization'] = 'token ' + token;
-
-  let owner, repo;
-  const urlMatch = url.match(/github\.com\/([^/]+)\/([^/]+)/);
-  if (urlMatch) { owner = urlMatch[1]; repo = urlMatch[2].replace(/\.git$/, ''); }
-  else {
-    const parts = url.split('/');
-    if (parts.length === 2) { owner = parts[0]; repo = parts[1]; }
-    else throw new Error('Invalid GitHub URL. Use owner/repo or full URL.');
-  }
-
-  const [repoRes, readmeRes, topicsRes] = await Promise.all([
-    fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers }),
-    fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, { headers }),
-    fetch(`https://api.github.com/repos/${owner}/${repo}/topics`, { headers: { ...headers, 'Accept': 'application/vnd.github.mercy-preview+json' } })
-  ]);
-
-  if (!repoRes.ok) throw new Error('Repo not found or private (add token in Settings).');
-  const repoData = await repoRes.json();
-  
-  let readmeText = '';
-  if (readmeRes.ok) {
-    const readmeData = await readmeRes.json();
-    const decoded = atob(readmeData.content);
-    readmeText = new TextDecoder().decode(Uint8Array.from(decoded, c => c.charCodeAt(0)));
-  }
-
-  let topics = [];
-  if (topicsRes.ok) {
-    const topicsData = await topicsRes.json();
-    topics = topicsData.names || [];
-  }
-
-  return {
-    metadata: {
-      name: repoData.name,
-      description: repoData.description || '',
-      stars: repoData.stargazers_count,
-      forks: repoData.forks_count,
-      language: repoData.language || 'Unknown',
-      topics: topics
-    },
-    readme: readmeText
-  };
-}
-
-$ghFetch.addEventListener('click', async () => {
-  const url = $ghUrl.value.trim();
-  if (!url) return toast('Enter a repository URL or owner/repo', 'error');
-  $ghFetch.disabled = true; $ghFetch.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching';
-  try {
-    const data = await fetchGitHub(url);
-    S.ghMeta = data.metadata;
+ $ghFetch.addEventListener('click',async()=>{
+  const url=$ghUrl.value.trim();
+  if(!url)return toast('Enter a repository URL or owner/repo','error');
+  $ghFetch.disabled=true;$ghFetch.innerHTML='<i class="fas fa-spinner fa-spin"></i> Fetching';
+  try{
+    const data=await fetchGitHub(url);
+    S.ghMeta=data.metadata;
     showGitHubMeta(data.metadata);
-    if (data.readme) {
-      $input.value = data.readme;
-      $input.dispatchEvent(new Event('input'));
-    } else if (data.metadata.description) {
-      $input.value = '# ' + data.metadata.name + '\n\n' + data.metadata.description;
-      $input.dispatchEvent(new Event('input'));
-    }
-    toast('Fetched ' + data.metadata.name + ' from GitHub');
-  } catch (err) {
-    toast(err.message, 'error');
-    showGitHubMeta(null);
-  } finally {
-    $ghFetch.disabled = false;
-    $ghFetch.innerHTML = '<i class="fas fa-download"></i> Fetch';
-  }
+    if(data.readme){$input.value=data.readme;$input.dispatchEvent(new Event('input'))}
+    else if(!data.readme&&data.metadata.description){$input.value='# '+data.metadata.name+'\n\n'+data.metadata.description;$input.dispatchEvent(new Event('input'))}
+    toast('Fetched '+data.metadata.name+' from GitHub');
+  }catch(err){toast(err.message,'error');showGitHubMeta(null)}
+  finally{$ghFetch.disabled=false;$ghFetch.innerHTML='<i class="fas fa-download"></i> Fetch'}
 });
 
-$ghUrl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $ghFetch.click(); } });
-
-function showGitHubMeta(meta) {
-  if (!meta) { $ghMeta.classList.remove('active'); $ghMeta.innerHTML = ''; return; }
-  $ghMeta.innerHTML = `
-    <div class="gh-meta-item"><i class="fas fa-star" style="color:var(--accent)"></i> <strong>${fmtNum(meta.stars)}</strong> stars</div>
-    <div class="gh-meta-item"><i class="fas fa-code-branch" style="color:var(--accent)"></i> <strong>${fmtNum(meta.forks)}</strong> forks</div>
-    <div class="gh-meta-item"><i class="fas fa-circle" style="color:var(--accent);font-size:8px"></i> <strong>${meta.language}</strong></div>
-  `;
-  $ghMeta.classList.add('active');
-}
+ $ghUrl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$ghFetch.click()}});
 
 // ============================================================
 // SAMPLE / TEMPLATE
 // ============================================================
-$('load-sample-btn').addEventListener('click', () => {
-  const k = $tmplSel.value;
-  $input.value = SAMPLES[k] || '';
-  $input.dispatchEvent(new Event('input'));
-  toast('Sample loaded');
+ $('load-sample-btn').addEventListener('click',()=>{
+  const k=$tmplSel.value;$input.value=SAMPLES[k]||'';$input.dispatchEvent(new Event('input'));toast('Sample loaded');
 });
-
-$tmplSel.addEventListener('change', () => {
-  const k = $tmplSel.value;
-  $input.value = k === 'empty' ? '' : (SAMPLES[k] || '');
-  $input.dispatchEvent(new Event('input'));
+ $tmplSel.addEventListener('change',()=>{
+  const k=$tmplSel.value;$input.value=k==='empty'?'':(SAMPLES[k]||'');$input.dispatchEvent(new Event('input'));
 });
 
 // ============================================================
 // GENERATE
 // ============================================================
-$genBtn.addEventListener('click', generate);
+ $genBtn.addEventListener('click',generate);
 
-async function generate() {
-  let text = $input.value.trim();
-  if (text.length < 20) return;
-  text = smartTrunc(text, MAX_CHARS);
+async function generate(){
+  let text=$input.value.trim();
+  if(text.length<20)return;
+  text=smartTrunc(text,MAX_CHARS);
 
-  $lo.classList.add('active'); $genBtn.disabled = true;
+  $lo.classList.add('active');$genBtn.disabled=true;
 
-  const provider = store.get('provider', 'none');
-  const hasKey = provider === 'groq' ? !!store.get('groq_key', '') : provider === 'openrouter' ? !!store.get('or_key', '') : false;
+  // Determine analysis mode
+  const provider=store.get('provider','none');
+  const hasKey=provider==='groq'?!!store.get('groq_key',''):provider==='openrouter'?!!store.get('or_key',''):false;
 
-  let spec = null;
-  try {
-    if (hasKey) {
-      $ldText.textContent = 'Analyzing with AI (' + provider + ')...';
-      const aiResult = await analyzeWithAI(text, S.ghMeta);
-      if (aiResult) {
-        spec = mergeGHMeta(aiResult.spec, S.ghMeta);
-        S.analysisMode = 'ai'; S.analysisModel = aiResult.model;
-      } else {
-        throw new Error('No AI response');
-      }
-    } else {
-      $ldText.textContent = 'Analyzing with rule-based engine...';
-      await new Promise(r => setTimeout(r, 300));
-      S.parsedDoc = parseMD(text);
-      S.variants = {};
-      spec = buildRuleSpec(S.parsedDoc, S.variants);
-      spec = mergeGHMeta(spec, S.ghMeta);
-      S.analysisMode = 'rule'; S.analysisModel = '';
+  let spec=null;
+  try{
+    if(hasKey){
+      $ldText.textContent='Analyzing with AI ('+provider+')...';
+      const aiResult=await analyzeWithAI(text,S.ghMeta);
+      if(aiResult){
+        spec=mergeGHMeta(aiResult.spec,S.ghMeta);
+        S.analysisMode='ai';S.analysisModel=aiResult.model;
+      }else throw new Error('No AI response');
+    }else{
+      $ldText.textContent='Analyzing with rule-based engine...';
+      await new Promise(r=>setTimeout(r,300));
+      S.parsedDoc=parseMD(text);
+      S.variants={};
+      spec=buildRuleSpec(S.parsedDoc,S.variants);
+      spec=mergeGHMeta(spec,S.ghMeta);
+      S.analysisMode='rule';S.analysisModel='';
     }
-    S.spec = spec;
+    S.spec=spec;
     renderToDOM();
-    $empty.style.display = 'none'; $ic.classList.add('active');
+    $empty.style.display='none';$ic.classList.add('active');
     buildChips();
     updateModeBadge();
-    toast('Infographic generated' + (S.analysisMode === 'ai' ? ' (AI-powered)' : ''));
-  } catch (err) {
+    toast('Infographic generated'+(S.analysisMode==='ai'?' (AI-powered)':''));
+  }catch(err){
     console.error(err);
-    if (S.analysisMode !== 'rule' && hasKey) {
-      $ldText.textContent = 'AI failed, falling back to rule-based...';
-      await new Promise(r => setTimeout(r, 300));
-      try {
-        S.parsedDoc = parseMD(text); S.variants = {};
-        spec = buildRuleSpec(S.parsedDoc, S.variants);
-        spec = mergeGHMeta(spec, S.ghMeta);
-        S.spec = spec; S.analysisMode = 'rule'; S.analysisModel = '';
-        renderToDOM(); $empty.style.display = 'none'; $ic.classList.add('active');
-        buildChips(); updateModeBadge();
-        toast('Fallback to rule-based analysis', 'error');
-      } catch (e2) {
-        toast('Generation failed: ' + e2.message, 'error');
-      }
-    } else {
-      toast('Generation failed: ' + err.message, 'error');
-    }
-  } finally {
-    $lo.classList.remove('active');
-    $genBtn.disabled = $input.value.trim().length < 20;
-  }
+    // Fallback to rule-based if AI fails
+    if(S.analysisMode!=='rule'&&hasKey){
+      $ldText.textContent='AI failed, falling back to rule-based...';
+      await new Promise(r=>setTimeout(r,300));
+      try{
+        S.parsedDoc=parseMD(text);S.variants={};
+        spec=buildRuleSpec(S.parsedDoc,S.variants);
+        spec=mergeGHMeta(spec,S.ghMeta);
+        S.spec=spec;S.analysisMode='rule';S.analysisModel='';
+        renderToDOM();$empty.style.display='none';$ic.classList.add('active');
+        buildChips();updateModeBadge();
+        toast('Fallback to rule-based analysis','error');
+      }catch(e2){toast('Generation failed: '+e2.message,'error')}
+    }else{toast('Generation failed: '+err.message,'error')}
+  }finally{$lo.classList.remove('active');$genBtn.disabled=$input.value.trim().length<20}
 }
 
-function renderToDOM() {
-  if (!S.spec) return;
-  $iw.innerHTML = renderSVG(S.spec, S.theme);
-}
+function renderToDOM(){if(!S.spec)return;$iw.innerHTML=renderSVG(S.spec,S.theme)}
 
-function updateModeBadge() {
-  if (S.analysisMode === 'ai') {
-    $modeBadge.className = 'mode-badge ai';
-    const short = S.analysisModel.split('/').pop().replace(/:free$/, '');
-    $modeBadge.textContent = 'AI · ' + short;
-  } else {
-    $modeBadge.className = 'mode-badge rule';
-    $modeBadge.textContent = 'Rule-based';
+function updateModeBadge(){
+  if(S.analysisMode==='ai'){
+    $modeBadge.className='mode-badge ai';
+    const short=S.analysisModel.split('/').pop().replace(/:free$/,'');
+    $modeBadge.textContent='AI · '+short;
+  }else{
+    $modeBadge.className='mode-badge rule';
+    $modeBadge.textContent='Rule-based';
   }
 }
 
 // ============================================================
 // SECTION CHIPS
 // ============================================================
-const SLBL = { 'problem-solution': 'Problem → Solution', 'stats': 'Metrics', 'features': 'Features', 'tech-stack': 'Tech Stack', 'steps': 'Steps', 'content-list': 'Details', 'content-block': 'Overview', 'overview': 'Overview', 'architecture': 'Architecture', 'fallback': 'About' };
+const SLBL={'problem-solution':'Problem → Solution','stats':'Metrics','features':'Features','tech-stack':'Tech Stack','steps':'Steps','content-list':'Details','content-block':'Overview'};
 
-function buildChips() {
-  if (!S.spec) return; $chips.innerHTML = '';
-  S.spec.sections.forEach(sec => {
-    const c = document.createElement('button'); c.className = 'sec-chip';
-    c.innerHTML = (SLBL[sec.id] || sec.id) + ` <i class="fas fa-rotate ri"></i>`;
-    c.addEventListener('click', () => regenSection(sec.id));
-    c.setAttribute('aria-label', 'Regenerate ' + (SLBL[sec.id] || sec.id));
+function buildChips(){
+  if(!S.spec)return;$chips.innerHTML='';
+  S.spec.sections.forEach(sec=>{
+    const c=document.createElement('button');c.className='sec-chip';
+    c.innerHTML=(SLBL[sec.id]||sec.id)+` <i class="fas fa-rotate ri"></i>`;
+    c.addEventListener('click',()=>regenSection(sec.id));
+    c.setAttribute('aria-label','Regenerate '+(SLBL[sec.id]||sec.id));
     $chips.appendChild(c);
   });
 }
 
-function regenSection(id) {
-  if (S.analysisMode === 'rule' && S.parsedDoc) {
-    S.variants[id] = ((S.variants[id] || 0) + 1);
-    S.spec = buildRuleSpec(S.parsedDoc, S.variants);
-    S.spec = mergeGHMeta(S.spec, S.ghMeta);
-    renderToDOM(); buildChips(); toast((SLBL[id] || id) + ' regenerated');
-  } else if (S.analysisMode === 'ai') {
+function regenSection(id){
+  if(S.analysisMode==='rule'&&S.parsedDoc){
+    S.variants[id]=((S.variants[id]||0)+1);
+    S.spec=buildRuleSpec(S.parsedDoc,S.variants);
+    S.spec=mergeGHMeta(S.spec,S.ghMeta);
+    renderToDOM();buildChips();toast((SLBL[id]||id)+' regenerated');
+  }else if(S.analysisMode==='ai'){
+    // For AI mode, re-run full AI analysis (section-level AI regen would need a different prompt)
     toast('Re-running full AI analysis...');
     generate();
   }
@@ -1064,219 +892,188 @@ function regenSection(id) {
 // ============================================================
 // THEME
 // ============================================================
-function buildThemeMenu() {
-  const m = $('theme-menu'); m.innerHTML = '';
-  for (const [k, t] of Object.entries(THEMES)) {
-    const b = document.createElement('button'); b.className = 'tm-opt';
-    b.innerHTML = `<span class="tm-sw" style="background:${t.swatch};border-color:${t.cardBorder}"></span> ${t.name}`;
-    if (k === S.theme) b.style.background = 'var(--accent-dim)';
-    b.addEventListener('click', () => {
-      S.theme = k; store.set('theme', k);
-      renderToDOM(); buildThemeMenu(); $('theme-menu').classList.remove('open');
-    });
+function buildThemeMenu(){
+  const m=$('theme-menu');m.innerHTML='';
+  for(const[k,t]of Object.entries(THEMES)){
+    const b=document.createElement('button');b.className='tm-opt';
+    b.innerHTML=`<span class="tm-sw" style="background:${t.swatch};border-color:${t.cardBorder}"></span> ${t.name}`;
+    if(k===S.theme)b.style.background='var(--accent-dim)';
+    b.addEventListener('click',()=>{S.theme=k;renderToDOM();buildThemeMenu();$('theme-menu').classList.remove('open')});
     m.appendChild(b);
   }
 }
 buildThemeMenu();
-$('theme-btn').addEventListener('click', e => { e.stopPropagation(); $('theme-menu').classList.toggle('open'); });
-document.addEventListener('click', () => $('theme-menu').classList.remove('open'));
+ $('theme-btn').addEventListener('click',e=>{e.stopPropagation();$('theme-menu').classList.toggle('open')});
+document.addEventListener('click',()=>$('theme-menu').classList.remove('open'));
 
 // ============================================================
 // EXPORT
 // ============================================================
-$('export-svg-btn').addEventListener('click', () => {
-  const svg = $iw.querySelector('svg'); if (!svg) return;
-  dl(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' }), slug(S.spec?.title || 'infographic') + '.svg');
-  toast('SVG exported');
+ $('export-svg-btn').addEventListener('click',()=>{
+  const svg=$iw.querySelector('svg');if(!svg)return;
+  dl(new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml;charset=utf-8'}),slug(S.spec?.title||'infographic')+'.svg');toast('SVG exported');
 });
 
-$('export-png-btn').addEventListener('click', () => {
-  const svg = $iw.querySelector('svg'); if (!svg) return;
-  const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' }));
-  const img = new Image();
-  img.onload = () => {
-    const c = document.createElement('canvas'); c.width = img.width * 2; c.height = img.height * 2;
-    const ctx = c.getContext('2d'); ctx.scale(2, 2); ctx.drawImage(img, 0, 0);
-    c.toBlob(b => { dl(b, slug(S.spec?.title || 'infographic') + '.png'); URL.revokeObjectURL(url); toast('PNG exported (2x)'); }, 'image/png');
-  };
-  img.src = url;
+ $('export-png-btn').addEventListener('click',()=>{
+  const svg=$iw.querySelector('svg');if(!svg)return;
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml;charset=utf-8'}));
+  const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=img.width*2;c.height=img.height*2;const ctx=c.getContext('2d');ctx.scale(2,2);ctx.drawImage(img,0,0);c.toBlob(b=>{dl(b,slug(S.spec?.title||'infographic')+'.png');URL.revokeObjectURL(url);toast('PNG exported (2x)')},'image/png')};img.src=url;
 });
 
-function dl(b, n) {
-  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = n;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(a.href), 100);
-}
-
-function slug(t) {
-  return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 60);
-}
+function dl(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(a.href),100)}
+function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,60)}
 
 // ============================================================
 // FULLSCREEN
 // ============================================================
-$('fs-btn').addEventListener('click', () => {
-  S.fs = !S.fs; document.body.classList.toggle('fs-mode', S.fs);
-  $('fs-btn').innerHTML = S.fs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
-  if (S.fs && document.fullscreenEnabled) document.documentElement.requestFullscreen().catch(() => {});
-  else if (!S.fs && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+ $('fs-btn').addEventListener('click',()=>{
+  S.fs=!S.fs;document.body.classList.toggle('fs-mode',S.fs);
+  $('fs-btn').innerHTML=S.fs?'<i class="fas fa-compress"></i>':'<i class="fas fa-expand"></i>';
+  if(S.fs&&document.fullscreenEnabled)document.documentElement.requestFullscreen().catch(()=>{});
+  else if(!S.fs&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
 });
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement && S.fs) {
-    S.fs = false; document.body.classList.remove('fs-mode'); $('fs-btn').innerHTML = '<i class="fas fa-expand"></i>';
-  }
-});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&S.fs){S.fs=false;document.body.classList.remove('fs-mode');$('fs-btn').innerHTML='<i class="fas fa-expand"></i>'}});
 
 // ============================================================
 // SETTINGS
 // ============================================================
-const settingsModal = $('settings-modal');
+const settingsModal=$('settings-modal');
 
-$('settings-btn').addEventListener('click', () => openSettings());
-$('settings-close').addEventListener('click', () => settingsModal.classList.remove('active'));
-settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
+ $('settings-btn').addEventListener('click',()=>openSettings());
+ $('settings-close').addEventListener('click',()=>settingsModal.classList.remove('active'));
+settingsModal.addEventListener('click',e=>{if(e.target===settingsModal)settingsModal.classList.remove('active')});
 
-document.querySelectorAll('.modal-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+// Tabs
+document.querySelectorAll('.modal-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     tab.classList.add('active');
-    $('tab-' + tab.dataset.tab).classList.add('active');
+    $('tab-'+tab.dataset.tab).classList.add('active');
   });
 });
 
-function openSettings() {
-  $('set-provider').value = store.get('provider', 'none');
-  $('set-groq-key').value = store.get('groq_key', '');
-  $('set-groq-model').value = store.get('groq_model', 'llama-3.3-70b-versatile');
-  $('set-or-key').value = store.get('or_key', '');
-  $('set-or-model').value = store.get('or_model', 'meta-llama/llama-3.3-70b-instruct:free');
-  $('set-gh-token').value = store.get('gh_token', '');
-  ['groq-status', 'or-status', 'gh-status'].forEach(id => { $(id).className = 'status-dot'; });
-  ['groq-test', 'or-test', 'gh-test'].forEach(id => { const b = $(id); b.className = 'test-btn'; b.textContent = 'Test'; });
+function openSettings(){
+  $('set-provider').value=store.get('provider','none');
+  $('set-groq-key').value=store.get('groq_key','');
+  $('set-groq-model').value=store.get('groq_model','llama-3.3-70b-versatile');
+  $('set-or-key').value=store.get('or_key','');
+  $('set-or-model').value=store.get('or_model','meta-llama/llama-3.3-70b-instruct:free');
+  $('set-gh-token').value=store.get('gh_token','');
+  // Reset status dots
+  ['groq-status','or-status','gh-status'].forEach(id=>{$(id).className='status-dot'});
+  ['groq-test','or-test','gh-test'].forEach(id=>{const b=$(id);b.className='test-btn';b.textContent='Test'});
   settingsModal.classList.add('active');
 }
 
-$('settings-save').addEventListener('click', () => {
-  store.set('provider', $('set-provider').value);
-  store.set('groq_key', $('set-groq-key').value.trim());
-  store.set('groq_model', $('set-groq-model').value);
-  store.set('or_key', $('set-or-key').value.trim());
-  store.set('or_model', $('set-or-model').value);
-  store.set('gh_token', $('set-gh-token').value.trim());
+ $('settings-save').addEventListener('click',()=>{
+  store.set('provider',$('set-provider').value);
+  store.set('groq_key',$('set-groq-key').value.trim());
+  store.set('groq_model',$('set-groq-model').value);
+  store.set('or_key',$('set-or-key').value.trim());
+  store.set('or_model',$('set-or-model').value);
+  store.set('gh_token',$('set-gh-token').value.trim());
   settingsModal.classList.remove('active');
   updateConnStatus();
   toast('Settings saved');
 });
 
-$('settings-clear').addEventListener('click', () => {
-  ['provider', 'groq_key', 'groq_model', 'or_key', 'or_model', 'gh_token'].forEach(k => store.clear(k));
-  $('set-provider').value = 'none'; $('set-groq-key').value = ''; $('set-or-key').value = ''; $('set-gh-token').value = '';
-  ['groq-status', 'or-status', 'gh-status'].forEach(id => { $(id).className = 'status-dot'; });
-  ['groq-test', 'or-test', 'gh-test'].forEach(id => { const b = $(id); b.className = 'test-btn'; b.textContent = 'Test'; });
-  updateConnStatus(); toast('All keys cleared');
+ $('settings-clear').addEventListener('click',()=>{
+  ['provider','groq_key','groq_model','or_key','or_model','gh_token'].forEach(k=>store.clear(k));
+  $('set-provider').value='none';$('set-groq-key').value='';$('set-or-key').value='';$('set-gh-token').value='';
+  ['groq-status','or-status','gh-status'].forEach(id=>{$(id).className='status-dot'});
+  ['groq-test','or-test','gh-test'].forEach(id=>{const b=$(id);b.className='test-btn';b.textContent='Test'});
+  updateConnStatus();toast('All keys cleared');
 });
 
-$('groq-test').addEventListener('click', async () => {
-  const btn = $('groq-test'), dot = $('groq-status');
-  const key = $('set-groq-key').value.trim(); if (!key) return toast('Enter a Groq API key', 'error');
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'status-dot';
-  try {
-    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages: [{ role: 'user', content: 'Say "ok"' }], max_tokens: 5 })
-    });
-    if (r.ok) { dot.className = 'status-dot ok'; btn.className = 'test-btn ok'; btn.textContent = 'Connected'; }
-    else { const e = await r.json().catch(() => {}); dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Failed ' + r.status; toast('Groq: ' + (e.error?.message || r.statusText), 'error'); }
-  } catch (e) { dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Error'; toast('Groq: ' + e.message, 'error'); }
-  btn.disabled = false;
+// Test buttons
+ $('groq-test').addEventListener('click',async()=>{
+  const btn=$('groq-test'),dot=$('groq-status');
+  const key=$('set-groq-key').value.trim();if(!key)return toast('Enter a Groq API key','error');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';dot.className='status-dot';
+  try{
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'llama-3.1-8b-instant',messages:[{role:'user',content:'Say "ok"'}],max_tokens:5})});
+    if(r.ok){dot.className='status-dot ok';btn.className='test-btn ok';btn.textContent='Connected'}
+    else{const e=await r.json().catch(()=>{});dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Failed '+r.status;toast('Groq: '+(e.error?.message||r.statusText),'error')}
+  }catch(e){dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Error';toast('Groq: '+e.message,'error')}
+  btn.disabled=false;
 });
 
-$('or-test').addEventListener('click', async () => {
-  const btn = $('or-test'), dot = $('or-status');
-  const key = $('set-or-key').value.trim(); if (!key) return toast('Enter an OpenRouter API key', 'error');
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'status-dot';
-  try {
-    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key, 'HTTP-Referer': window.location.origin },
-      body: JSON.stringify({ model: 'meta-llama/llama-3.3-70b-instruct:free', messages: [{ role: 'user', content: 'Say "ok"' }], max_tokens: 5 })
-    });
-    if (r.ok) { dot.className = 'status-dot ok'; btn.className = 'test-btn ok'; btn.textContent = 'Connected'; }
-    else { const e = await r.json().catch(() => {}); dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Failed ' + r.status; toast('OpenRouter: ' + (e.error?.message || r.statusText), 'error'); }
-  } catch (e) { dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Error'; toast('OpenRouter: ' + e.message, 'error'); }
-  btn.disabled = false;
+ $('or-test').addEventListener('click',async()=>{
+  const btn=$('or-test'),dot=$('or-status');
+  const key=$('set-or-key').value.trim();if(!key)return toast('Enter an OpenRouter API key','error');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';dot.className='status-dot';
+  try{
+    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'HTTP-Referer':window.location.origin},body:JSON.stringify({model:'meta-llama/llama-3.3-70b-instruct:free',messages:[{role:'user',content:'Say "ok"'}],max_tokens:5})});
+    if(r.ok){dot.className='status-dot ok';btn.className='test-btn ok';btn.textContent='Connected'}
+    else{const e=await r.json().catch(()=>{});dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Failed '+r.status;toast('OpenRouter: '+(e.error?.message||r.statusText),'error')}
+  }catch(e){dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Error';toast('OpenRouter: '+e.message,'error')}
+  btn.disabled=false;
 });
 
-$('gh-test').addEventListener('click', async () => {
-  const btn = $('gh-test'), dot = $('gh-status');
-  const token = $('set-gh-token').value.trim(); if (!token) return toast('Enter a GitHub token', 'error');
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; dot.className = 'status-dot';
-  try {
-    const r = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
-    if (r.ok) { const d = await r.json(); dot.className = 'status-dot ok'; btn.className = 'test-btn ok'; btn.textContent = '@' + d.login; }
-    else { dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Failed ' + r.status; toast('GitHub: ' + r.statusText, 'error'); }
-  } catch (e) { dot.className = 'status-dot fail'; btn.className = 'test-btn fail'; btn.textContent = 'Error'; toast('GitHub: ' + e.message, 'error'); }
-  btn.disabled = false;
+ $('gh-test').addEventListener('click',async()=>{
+  const btn=$('gh-test'),dot=$('gh-status');
+  const token=$('set-gh-token').value.trim();if(!token)return toast('Enter a GitHub token','error');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';dot.className='status-dot';
+  try{
+    const r=await fetch('https://api.github.com/user',{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+    if(r.ok){const d=await r.json();dot.className='status-dot ok';btn.className='test-btn ok';btn.textContent='@'+d.login}
+    else{dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Failed '+r.status;toast('GitHub: '+r.statusText,'error')}
+  }catch(e){dot.className='status-dot fail';btn.className='test-btn fail';btn.textContent='Error';toast('GitHub: '+e.message,'error')}
+  btn.disabled=false;
 });
 
-window.toggleVis = function(id) { const el = $(id); el.type = el.type === 'password' ? 'text' : 'password'; };
+// Toggle password visibility
+window.toggleVis=function(id){const el=$(id);el.type=el.type==='password'?'text':'password'};
 
-function updateConnStatus() {
-  const btn = $('settings-btn');
-  const p = store.get('provider', 'none');
-  const hasKey = p === 'groq' ? !!store.get('groq_key', '') : p === 'openrouter' ? !!store.get('or_key', '') : false;
-  const hasGH = !!store.get('gh_token', '');
-  btn.classList.toggle('connected', hasKey || hasGH);
+// Update header connection indicator
+function updateConnStatus(){
+  const btn=$('settings-btn');
+  const p=store.get('provider','none');
+  const hasKey=p==='groq'?!!store.get('groq_key',''):p==='openrouter'?!!store.get('or_key',''):false;
+  const hasGH=!!store.get('gh_token','');
+  btn.classList.toggle('connected',hasKey||hasGH);
 }
 updateConnStatus();
 
 // ============================================================
 // HELP
 // ============================================================
-$('help-btn').addEventListener('click', showHelp);
+ $('help-btn').addEventListener('click',showHelp);
 
-function showHelp() {
-  const o = document.createElement('div');
-  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)';
-  o.addEventListener('click', e => { if (e.target === o) o.remove(); });
-  const m = document.createElement('div');
-  m.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;padding:28px';
-  m.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h2 style="font-size:18px;font-weight:700">How to Use</h2><button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px" aria-label="Close"><i class="fas fa-times"></i></button></div>
+function showHelp(){
+  const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)';
+  o.addEventListener('click',e=>{if(e.target===o)o.remove()});
+  const m=document.createElement('div');m.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;padding:28px';
+  m.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h2 style="font-size:18px;font-weight:700">How to Use</h2><button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px" aria-label="Close"><i class="fas fa-times"></i></button></div>
   <div style="font-size:13px;line-height:1.8;color:var(--muted)">
     <p style="color:var(--fg);font-weight:500;margin-bottom:12px">Turn GitHub repos and source material into shareable infographics — entirely in your browser.</p>
     <h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">GitHub Integration</h3>
     <p>Enter a repo URL (<code style="color:var(--fg);background:var(--card);padding:1px 5px;border-radius:3px">owner/repo</code> or full URL) and click Fetch. The README and metadata (stars, forks, language, topics) are pulled from the GitHub API. Private repos require a Personal Access Token in Settings.</p>
     <h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">AI-Powered Analysis</h3>
-    <p>Configure Groq or OpenRouter in Settings for intelligent content extraction. The AI reads your source material and outputs a structured infographic spec. Falls back to rule-based analysis if no API key is set.</p>
+    <p>Configure Groq or OpenRouter in Settings for intelligent content extraction. The AI reads your source material and outputs a structured infographic spec with proper summaries, metric extraction, and section classification. Falls back to rule-based analysis if no API key is set or if the AI call fails.</p>
     <h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">Rule-Based Fallback</h3>
-    <p>Without AI, a built-in engine uses pattern matching to detect sections (problem, solution, features, tech stack, metrics, steps) and extract data. Works well for well-structured Markdown.</p>
+    <p>Without AI, a built-in engine uses pattern matching to detect sections (problem, solution, features, tech stack, metrics, steps) and extract data. Works well for well-structured Markdown with clear headings and lists.</p>
     <h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">Refinement</h3>
-    <p>After generation, hover over section chips in the toolbar and click the rotate icon to regenerate that section. Switch themes with the palette button. Export as SVG (vector) or PNG (2x raster).</p>
+    <p>After generation, hover over section chips in the toolbar and click the rotate icon to regenerate that section with a different layout. Switch themes with the palette button. Export as SVG (vector) or PNG (2x raster).</p>
     <h3 style="font-size:13px;font-weight:700;color:var(--accent);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px">Privacy</h3>
     <p>All processing is client-side. API keys are stored only in localStorage and sent directly to their respective endpoints. No intermediary servers, no analytics, no tracking.</p>
   </div>`;
-  o.appendChild(m); document.body.appendChild(o);
+  o.appendChild(m);document.body.appendChild(o);
 }
 
 // ============================================================
 // TOAST
 // ============================================================
-function toast(msg, type) {
-  const c = $('toast-container'), t = document.createElement('div');
-  t.className = 'toast' + (type === 'error' ? ' error' : '');
-  t.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${esc(msg)}`;
-  c.appendChild(t); setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 250); }, 2800);
-}
-
-// AI Analysis Stub (kept for compatibility, falls back gracefully)
-async function analyzeWithAI(text, ghMeta) {
-  // This is a simplified stub. In a full implementation, this would call Groq/OpenRouter.
-  // For now, it returns null to trigger the robust rule-based fallback we just improved.
-  return null; 
+function toast(msg,type){
+  const c=$('toast-container'),t=document.createElement('div');
+  t.className='toast'+(type==='error'?' error':'');
+  t.innerHTML=`<i class="fas fa-${type==='error'?'exclamation-circle':'check-circle'}"></i> ${esc(msg)}`;
+  c.appendChild(t);setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),250)},2800);
 }
 
 // Init
-setTimeout(() => $input.focus(), 100);
+setTimeout(()=>$input.focus(),100);
 </script>
 </body>
 </html>
